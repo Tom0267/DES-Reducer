@@ -1,6 +1,14 @@
 import cv2
 
-cap = cv2.VideoCapture("tomAndSuzi.mp4")
+#video
+#cap = cv2.VideoCapture("tomAndSuzi.mp4")
+
+#webcam
+cap = cv2.VideoCapture(0)       #sets video cap to default camera
+cap.set(3,640)      #set width
+cap.set(4,480)      #set height
+cap.set(10,100)     #set brightness
+
 
 #object detection from stable camera
 object_detector = cv2.createBackgroundSubtractorMOG2(history=100, varThreshold=20)
@@ -21,7 +29,7 @@ while True:
     for cnt in contours:
         #calculate area and remove small objects
         area = cv2.contourArea(cnt)
-        if area > 250:
+        if area > 100:
             cv2.drawContours(frame, [cnt], -1, (0,255,0), 2)
 
     #key = cv2.waitKey(30)
