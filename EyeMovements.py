@@ -1,5 +1,4 @@
 from scipy.spatial import distance as dist
-from win10toast import ToastNotifier
 from imutils.video import FileVideoStream
 from imutils.video import VideoStream
 from imutils import face_utils
@@ -56,8 +55,8 @@ class EyeMovement:
     def getTotal(self):
         return self.total
 
-    def __init__(self):
-        self.notifier = ToastNotifier()					        #initialize the notifier
+    def __init__(self, notifier):
+        self.notifier = notifier					            #initialize the notifier
         self.blink1 = np.datetime64('now')                      #initializes blink1
         self.blink2 = np.datetime64('now')                      #initializes blink2
         self.leftEye = 0                                        #initializes left eye
