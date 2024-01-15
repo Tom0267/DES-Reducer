@@ -18,7 +18,7 @@ class config:
         self.notifier = notifier
         self.file = open('Resources/configData.csv', 'w')
         self.writer = csv.writer(self.file)
-        self.configure()
+        print("initialized")
     
     def calculateDistance(self, leftEye, rightEye):
         leftEyeCenter = leftEye.mean(axis=0).astype("int")				#compute the center of mass for each eye
@@ -30,6 +30,23 @@ class config:
         if not vs.stream.isOpened():																#check if the video stream was opened correctly
             self.notifier.show_toast("Cannot open camera", "Ensure your camera is connected.", duration=5, threaded=True)		#display tray notification
             exit()
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     def configure(self):
         vs = VideoStream(src=0).start()

@@ -7,6 +7,7 @@ from BreakReminder import breakTime
 from imutils import face_utils
 from Config import config
 from time import time
+from GUI import GUI
 import numpy as np
 import threading
 import imutils
@@ -24,7 +25,8 @@ predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.da
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]							#grab the indexes of the facial landmarks for the left eye
 (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
 
-config = config(detector, predictor, notifier)													#configure the application to the user's face
+config = GUI(detector, predictor, notifier)													#configure the application to the user's face
+
 vs = VideoStream(src=0).start()															#start the video stream thread
 
 while True:
