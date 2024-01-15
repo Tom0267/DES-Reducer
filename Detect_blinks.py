@@ -3,8 +3,9 @@ from imutils.video import FileVideoStream
 from imutils.video import VideoStream
 from EyeMovements import EyeMovement
 from win10toast import ToastNotifier
-from imutils import face_utils
 from BreakReminder import breakTime
+from imutils import face_utils
+from Config import config
 from time import time
 import numpy as np
 import threading
@@ -19,22 +20,24 @@ eyeMovement = EyeMovement(notifier)						#initialize the eye movement class
 breakCheck = breakTime(notifier)						#initialize the break check class
 
 detector = dlib.get_frontal_face_detector() 											#initialize dlib's face detector
-predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.dat")		#initialize dlib's facial landmark predictor
+predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.dat")		#initialize dlib's facial landmark predictorqqqqqq
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]							#grab the indexes of the facial landmarks for the left eye
 (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
 
+config = config(detector, predictor, notifier)													#configure the application to the user's face
 vs = VideoStream(src=0).start()															#start the video stream thread
+
 while True:
-	frame = vs.read()
-	brightness = threading.Thread(brightnessControl.update(frame))					#start the brightness control thread
-	breakTime = threading.Thread(breakCheck.checkBreak())							#start the break check thread
+	frame = vs.read()																	#read the frame from the threaded video stream
+	brightness = threading.Thread(brightnessControl.update(frame))						#start the brightness control thread
+	breakTime = threading.Thread(breakCheck.checkBreak())								#start the break check thread
 	brightness.start()											#start the brightness control thread
 	breakTime.start()											#start the break check thread
 	frame = imutils.resize(frame, width=450)
 	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 	
 	faces = detector(gray, 0)									#detect faces in the grayscale frame
-	if not faces:											#check if a face was detected
+	if not faces:												#check if a face was detected
 		notifier.show_toast("No Face Detected", "Ensure your face is in the frame.", duration=5, threaded=True)		#display tray notification
 	else:
 		for face in faces:
