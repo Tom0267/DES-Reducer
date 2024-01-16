@@ -1,6 +1,5 @@
+from imutils.video import FileVideoStream, VideoStream
 from ScreenBrightness import BrightnessControl
-from imutils.video import FileVideoStream
-from imutils.video import VideoStream
 from EyeMovements import EyeMovement
 from win10toast import ToastNotifier
 from BreakReminder import breakTime

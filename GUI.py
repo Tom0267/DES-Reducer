@@ -1,5 +1,4 @@
-from imutils.video import FileVideoStream
-from imutils.video import VideoStream
+from imutils.video import FileVideoStream, VideoStream
 from PIL import Image, ImageTk
 from imutils import face_utils
 from Config import config
@@ -21,7 +20,7 @@ class GUI(customtkinter.CTk):
         frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)                                           #convert the frame from BGR to RGB
         captured_image = Image.fromarray(frame)                                                 #convert the frame to an image
         photo_image = ImageTk.PhotoImage(image=captured_image)                                  #convert the image to a tkinter image
-        #self.label_widget.photo_image = photo_image                                             #keep a reference to the image       
+        #self.label_widget.photo_image = photo_image                                            #keep a reference to the image       
         self.label_widget.configure(image=photo_image)                                          #configure the label to display the image
         self.label_widget.after(10, self.videoLoop)                                             #call the video loop after 10ms
 
@@ -72,7 +71,6 @@ class GUI(customtkinter.CTk):
         self.middleFrame = customtkinter.CTkFrame(self.app)                         #create the middle frame
         self.middleFrame.pack(side='top', fill='both')                              #add the middle frame to the GUI  
         
-        
         self.ButtonFrame = customtkinter.CTkFrame(self.leftFrame)                   #create the button frame
         self.ButtonFrame.pack(side='left', fill='y', pady=10, padx=10)              #add the button frame to the left frame
         self.ImageFrame = customtkinter.CTkFrame(self.rightFrame)                   #create the image frame
@@ -82,10 +80,9 @@ class GUI(customtkinter.CTk):
         self.TextFrame = customtkinter.CTkFrame(self.middleFrame)                   #create the text frame
         self.TextFrame.pack(fill='both', pady=10, padx=10)                          #add the text frame to the middle frame   
         
-
         self.label_widget = customtkinter.CTkLabel(self.VideoFrame, text="")        #create the label widget
         self.label_widget.pack()                                                    #add the label widget to the video frame
-        self.ConfigureButton = customtkinter.CTkButton(self.middleFrame, text="Configure", command= self.config.configure, hover_color='blue')      #create the configure button
+        self.ConfigureButton = customtkinter.CTkButton(self.middleFrame, text="Configure", command= None, hover_color='blue')      #create the configure button
         self.ConfigureButton.pack(padx=10, pady=10,)                                                                                                #add the configure button to the middle frame
         self.BlinksButton = customtkinter.CTkButton(self.ButtonFrame, text="Configure Blinks", command= self.Blinks, hover_color='blue')            #create the blink button
         self.BlinksButton.pack(padx=10, pady=10)                                                                                                    #add the blink button to the button frame

@@ -1,6 +1,5 @@
+from imutils.video import FileVideoStream, VideoStream
 from scipy.spatial import distance as dist
-from imutils.video import FileVideoStream
-from imutils.video import VideoStream
 from imutils import face_utils
 from time import time
 import numpy as np
