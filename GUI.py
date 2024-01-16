@@ -40,23 +40,23 @@ class GUI(customtkinter.CTk):
         self.BlinksButton.configure(fg_color='green')                                               #change the color of the blink button
         self.Description.configure(state = "normal")                                                #enable editing textbox 
         self.Description.delete("0.0", 'end')                                                       #clear the textbox             
-        self.Description.insert("0.0", "Please blink 10 times to configure the blink threshold.")   #display instructions
+        self.Description.insert("0.0", "Please blink 10 times to configure the blink threshold. Press Configure to begin.")   #display instructions
         self.Description.configure(state = "disabled")                                              #disable editing textbox
         self.ConfigureButton.configure(command = self.config.configureBlinks)                       #change the command of the configure button to configure blinks
         
     
     def Relax(self):
-        self.BlinksButton.configure(fg_color='#1f538d')                                                             #change the color of the blink button
-        self.relaxButton.configure(fg_color='green')                                                                #change the color of the relax button
-        self.Description.configure(state = "normal")                                                                #enable editing textbox 
-        self.Description.delete("0.0", 'end')                                                                       #clear the textbox                     
-        self.Description.insert("0.0", "Please look to the center of the screen and relax while I configure.")      #display instructions
-        self.Description.configure(state = "disabled")                                                              #disable editing textbox                      
-        
+        self.BlinksButton.configure(fg_color='#1f538d')                                                                                       #change the color of the blink button
+        self.relaxButton.configure(fg_color='green')                                                                                          #change the color of the relax button
+        self.Description.configure(state = "normal")                                                                                          #enable editing textbox 
+        self.Description.delete("0.0", 'end')                                                                                                 #clear the textbox                     
+        self.Description.insert("0.0", "Please look to the center of the screen and relax while I configure. Press Configure to begin.")      #display instructions
+        self.Description.configure(state = "disabled")                                                                                        #disable editing textbox                      
+        self.ConfigureButton.configure(command = self.config.configureRelax)                                                                  #change the command of the configure button to configure relax
     
     def __init__(self, detector, predictor, notifier):
         self.vs = VideoStream(src=0).start()                                        #start the video stream thread
-        self.config = config(detector, predictor, notifier)                         #initialize the config class
+        self.config = config(detector, predictor, notifier, self.vs)                #initialize the config class
         
         self.app = customtkinter.CTk()                                              #initialize the customTKinter class                  
         self.app.protocol("WM_DELETE_WINDOW", self.onClose)                         #set the protocol for closing the GUI
