@@ -31,23 +31,6 @@ class config:
             self.notifier.show_toast("Cannot open camera", "Ensure your camera is connected.", duration=5, threaded=True)		#display tray notification
             exit()
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     def configure(self):
         vs = VideoStream(src=0).start()
         self.checkCamera(vs)
