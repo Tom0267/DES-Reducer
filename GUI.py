@@ -39,7 +39,7 @@ class GUI(customtkinter.CTk):
         self.BlinksButton.configure(fg_color='green')                                               #change the color of the blink button
         self.Description.configure(state = "normal")                                                #enable editing textbox 
         self.Description.delete("0.0", 'end')                                                       #clear the textbox             
-        self.Description.insert("0.0", "Please blink 10 times to configure the blink threshold. Press Configure to begin.")   #display instructions
+        self.Description.insert("0.0", "Please close your eyes.\nA notification will appear when configuration is complete\nPress Configure to begin.")   #display instructions
         self.Description.configure(state = "disabled")                                              #disable editing textbox
         self.ConfigureButton.configure(command = self.config.configureBlinks)                       #change the command of the configure button to configure blinks
         
