@@ -29,7 +29,7 @@ class GUI(customtkinter.CTk):
         self.app.mainloop()                                                                     #start the GUI loop                                      
         
     def onClose(self):
-        self.file.close()                                                                       #close the file        
+        #self.file.close()                                                                       #close the file        
         self.vs.stop()                                                                          #stop the video stream                
         self.app.quit()                                                                         #close the GUI
         self.app.destroy()                                                                      #destroy the GUI                          

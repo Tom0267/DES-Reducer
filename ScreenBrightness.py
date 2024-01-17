@@ -1,6 +1,5 @@
 import cv2
 import screen_brightness_control as sbc
-
 class BrightnessControl:
 
     def cameraExposure(self):
@@ -21,7 +20,6 @@ class BrightnessControl:
         brightness = self.calculateBrightness(frame) * 100
         self.setBrightness(brightness)
         
-
     def __init__(self):
         self.brightness_offset = 20                     #adjust to offset the brightness up/down. 
         self.cameraIndex = 0                            #select camera

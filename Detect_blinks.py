@@ -13,7 +13,7 @@ import imutils
 import time
 import dlib
 import cv2
-
+ 
 brightnessControl = BrightnessControl()					#initialize the brightness control class
 notifier = ToastNotifier()								#initialize the notifier
 eyeMovement = EyeMovement(notifier)						#initialize the eye movement class
@@ -25,7 +25,6 @@ predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.da
 (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
 
 config = GUI(detector, predictor, notifier)													#configure the application to the user's face
-
 vs = VideoStream(src=0).start()															#start the video stream thread
 
 while True:
