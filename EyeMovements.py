@@ -1,11 +1,9 @@
 from imutils.video import FileVideoStream, VideoStream
 from imutils import face_utils
 from EyeArea import Eyes
-from time import time
 import numpy as np
 import threading
 import imutils
-import time
 import dlib
 import cv2
 import csv

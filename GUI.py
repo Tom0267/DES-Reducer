@@ -19,8 +19,7 @@ class GUI(customtkinter.CTk):
         frame = imutils.resize(frame, height = 500, width=450)                                  #resize the frame                     
         frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)                                           #convert the frame from BGR to RGB
         captured_image = Image.fromarray(frame)                                                 #convert the frame to an image
-        photo_image = ImageTk.PhotoImage(image=captured_image)                                  #convert the image to a tkinter image
-        #self.label_widget.photo_image = photo_image                                            #keep a reference to the image       
+        photo_image = ImageTk.PhotoImage(image=captured_image)                                  #convert the image to a tkinter image 
         self.label_widget.configure(image=photo_image)                                          #configure the label to display the image
         self.label_widget.after(10, self.videoLoop)                                             #call the video loop after 10ms
 

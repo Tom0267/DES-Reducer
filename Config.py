@@ -2,17 +2,18 @@ from imutils.video import FileVideoStream, VideoStream
 from EyeMovements import EyeMovement
 from imutils import face_utils
 from EyeArea import Eyes
-from time import time
+import pandas as pd
 import numpy as np
 import threading
 import imutils
-import time
 import dlib
 import cv2
 import csv
 
 class config:
     def __init__(self, detector, predictor, notifier, vs):
+        self.blinked = False
+        self.relaxed = False
         self.vs = vs
         self.detector = detector
         self.predictor = predictor                                              
@@ -22,41 +23,27 @@ class config:
         self.LEMDistances = []
         self.REMDistances = []           
         self.ear = []
-        self.openFile()
+        self.clearFile()
         self.searchString = []
-        self.f.truncate(0)                               #clears contents of csv
+        self.dataframe = pd.DataFrame(columns = ['Labels','Values'])        #creates dataframe
+
+    def checkDataFrame(self, func):
+        if func == 'Relax':
+            self.searchString = ['EE', 'LEM', 'REM', 'EAR']                             #defines search values for relax function
+        else:
+            self.searchString = ['CEAR']                                                #defines search values for blinking function
+        for label in self.searchString:                                                 #searches for values in dataframe
+            indexes = self.dataframe[self.dataframe['Labels'] == label].index           #gets index of values that satisfy conditions
+        self.dataframe.drop(indexes, inplace = True)                                    #removes row from dataframe
         
-    def checkFile(self, value):
-        newfile = self.ReadRows(value)
-        print(newfile)
-        if not newfile == None:
-            with open('Resources/configData.csv', 'w', newline='') as f:		                #open the csv file
-                write = csv.writer(f)                                                           #create the csv writer
-                write.writerows(newfile)
-                f.close()
-        
-    def ReadRows(self, value):
-        fileRows = []
-        if value == 'Blinks':
-            self.searchString = ['CEAR']
-        elif value == 'RELAX':
-            self.searchString = ['EE', 'LEM', 'REM', 'EAR']
-        for i in range(len(self.searchString)):
-            with open('Resources/configData.csv', 'r') as f:		                #open the csv file
-                reader = csv.reader(f, delimiter=',')
-                if reader == None:
-                    pass
-                else:
-                    for row in reader:
-                        if not row == []:
-                            fileRows.append(row)
-                            if row[1] == self.searchString[i]:
-                                fileRows.remove(row)
-        return fileRows
-        
-    def openFile(self):           
-        self.f = open('Resources/configData.csv', 'a')		                #open the csv file
+    def saveDataFrame(self):
+        self.dataframe.to_csv('Resources/configData.csv', index = False, header = False)     #save the dataframe to the csv file
+    
+    def clearFile(self):           
+        self.f = open('Resources/configData.csv', 'w')		                #open the csv file
         self.writer = csv.writer(self.f)                                     #create the csv writer
+        self.f.truncate(0)                               #clears contents of csv
+        self.f.close
     
     def calculateDistance(self, leftEye, rightEye, mouth):
         leftEyeCenter = leftEye.mean(axis=0).astype("int")				    #compute the center of mass for each eye
@@ -68,12 +55,12 @@ class config:
         
     def averages(self, func):
         if func == 'Relax':
-            self.EEDistance = {'EE',np.mean(self.EEdistances)}							#compute the average distance between the eyes
-            self.LEMDistance = {'LEM',np.mean(self.LEMDistances)}						#compute the average distance between the left eye and the mouth
-            self.REMDistance = {'REM',np.mean(self.REMDistances)}						#compute the average distance between the right eye and the mouth
-            self.EAR = {'EAR',np.mean(self.ear)}										#compute the average eye aspect ratio
+            self.EEDistance = np.mean(self.EEdistances)							#compute the average distance between the eyes
+            self.LEMDistance = np.mean(self.LEMDistances)						#compute the average distance between the left eye and the mouth
+            self.REMDistance = np.mean(self.REMDistances)						#compute the average distance between the right eye and the mouth
+            self.EAR = np.mean(self.ear)										#compute the average eye aspect ratio
         else:
-            self.EAR = {'CEAR',np.mean(self.ear)}
+            self.CEAR = np.mean(self.ear)                                        #compute the average closed eye aspect ratio
 
     def calculateEAR(self, leftEye, rightEye):
         leftEAR = self.eyeArea.eye_aspect_ratio(leftEye)				#left eye aspect ratio
@@ -110,15 +97,16 @@ class config:
                     self.counter += 1
                     if self.counter >= 5:
                         self.averages('Relax')
-                        self.openFile()
-                        self.checkFile('RELAX')
-                        self.writer.writerow(self.EEDistance)   #write the average distance between the eyes to the csv file
-                        self.writer.writerow(self.LEMDistance) #write the average distance between the left eye and the mouth to the csv file
-                        self.writer.writerow(self.REMDistance) #write the average distance between the right eye and the mouth to the csv file
-                        self.writer.writerow(self.EAR) #write the average eye aspect ratio to the csv file
-                        self.f.close()
+                        self.checkDataFrame('Relax')
+                        self.dataframe = pd.concat([self.dataframe, pd.DataFrame({'Labels': ['EE'], 'Values': [self.EEDistance]})])  #write the average distance between the eyes to the dataframe
+                        self.dataframe = pd.concat([self.dataframe, pd.DataFrame({'Labels': ['LEM'], 'Values': [self.LEMDistance]})]) #write the average distance between the left eye and the mouth to the dataframe
+                        self.dataframe = pd.concat([self.dataframe, pd.DataFrame({'Labels': ['REM'], 'Values': [self.REMDistance]})]) #write the average distance between the right eye and the mouth to the dataframe
+                        self.dataframe = pd.concat([self.dataframe, pd.DataFrame({'Labels': ['EAR'], 'Values': [self.EAR]})]) #write the average eye aspect ratio to the dataframe
                         self.notifier.show_toast("Relaxed Configuration Complete","", duration=5, threaded=True)		#display tray notification
+                        self.relaxed = True
                         self.loop = False 
+        if self.blinked == True and self.relaxed == True:
+            self.saveDataFrame()
                         
     def configureBlinks(self):
         self.checkCamera(self.vs)
@@ -142,9 +130,10 @@ class config:
                     self.counter += 1
                     if self.counter >= 5:
                         self.averages('Blinks')
-                        self.checkFile('Blinks')
-                        self.openFile()
-                        self.writer.writerow(self.EAR) #write the average eye aspect ratio to the csv file
-                        self.f.close()
+                        self.checkDataFrame('Blinks')
+                        self.dataframe = pd.concat([self.dataframe, pd.DataFrame({'Labels': ['CEAR'], 'Values': [self.CEAR]})]) #write the average eye aspect ratio to the csv file
                         self.notifier.show_toast("Blink Configuration Complete","", duration=5, threaded=True)		#display tray notification
+                        self.blinked = True
                         self.loop = False 
+        if self.blinked == True and self.relaxed == True:
+            self.saveDataFrame()
