@@ -23,11 +23,40 @@ class config:
         self.REMDistances = []           
         self.ear = []
         self.openFile()
-        self.file.truncate(0)                               #clears contents of csv
-    
+        self.searchString = []
+        self.f.truncate(0)                               #clears contents of csv
+        
+    def checkFile(self, value):
+        newfile = self.ReadRows(value)
+        print(newfile)
+        if not newfile == None:
+            with open('Resources/configData.csv', 'w', newline='') as f:		                #open the csv file
+                write = csv.writer(f)                                                           #create the csv writer
+                write.writerows(newfile)
+                f.close()
+        
+    def ReadRows(self, value):
+        fileRows = []
+        if value == 'Blinks':
+            self.searchString = ['CEAR']
+        elif value == 'RELAX':
+            self.searchString = ['EE', 'LEM', 'REM', 'EAR']
+        for i in range(len(self.searchString)):
+            with open('Resources/configData.csv', 'r') as f:		                #open the csv file
+                reader = csv.reader(f, delimiter=',')
+                if reader == None:
+                    pass
+                else:
+                    for row in reader:
+                        if not row == []:
+                            fileRows.append(row)
+                            if row[1] == self.searchString[i]:
+                                fileRows.remove(row)
+        return fileRows
+        
     def openFile(self):           
-        self.file = open('Resources/configData.csv', 'a')		                #open the csv file
-        self.writer = csv.writer(self.file)                                     #create the csv writer
+        self.f = open('Resources/configData.csv', 'a')		                #open the csv file
+        self.writer = csv.writer(self.f)                                     #create the csv writer
     
     def calculateDistance(self, leftEye, rightEye, mouth):
         leftEyeCenter = leftEye.mean(axis=0).astype("int")				    #compute the center of mass for each eye
@@ -39,10 +68,12 @@ class config:
         
     def averages(self, func):
         if func == 'Relax':
-            self.EEDistance = np.mean(self.EEdistances)							#compute the average distance between the eyes
-            self.LEMDistance = np.mean(self.LEMDistances)						#compute the average distance between the left eye and the mouth
-            self.REMDistance = np.mean(self.REMDistances)						#compute the average distance between the right eye and the mouth
-        self.EAR = np.mean(self.ear)										#compute the average eye aspect ratio
+            self.EEDistance = {'EE',np.mean(self.EEdistances)}							#compute the average distance between the eyes
+            self.LEMDistance = {'LEM',np.mean(self.LEMDistances)}						#compute the average distance between the left eye and the mouth
+            self.REMDistance = {'REM',np.mean(self.REMDistances)}						#compute the average distance between the right eye and the mouth
+            self.EAR = {'EAR',np.mean(self.ear)}										#compute the average eye aspect ratio
+        else:
+            self.EAR = {'CEAR',np.mean(self.ear)}
 
     def calculateEAR(self, leftEye, rightEye):
         leftEAR = self.eyeArea.eye_aspect_ratio(leftEye)				#left eye aspect ratio
@@ -61,7 +92,6 @@ class config:
         (mStart, mEnd) = face_utils.FACIAL_LANDMARKS_IDXS["mouth"]							#grab the indexes of the facial landmarks for the mouth
         self.counter = 0
         self.loop = True
-        self.openFile()
         while self.loop == True:
             frame = self.vs.read()
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -80,11 +110,13 @@ class config:
                     self.counter += 1
                     if self.counter >= 5:
                         self.averages('Relax')
-                        with self.file as csvfile:
-                            self.writer.writerow(['EE',self.EEDistance])   #write the average distance between the eyes to the csv file
-                            self.writer.writerow(['LEM',self.LEMDistance]) #write the average distance between the left eye and the mouth to the csv file
-                            self.writer.writerow(['REM',self.REMDistance]) #write the average distance between the right eye and the mouth to the csv file
-                            self.writer.writerow(['OEAR',np.mean(self.EAR)]) #write the average eye aspect ratio to the csv file
+                        self.openFile()
+                        self.checkFile('RELAX')
+                        self.writer.writerow(self.EEDistance)   #write the average distance between the eyes to the csv file
+                        self.writer.writerow(self.LEMDistance) #write the average distance between the left eye and the mouth to the csv file
+                        self.writer.writerow(self.REMDistance) #write the average distance between the right eye and the mouth to the csv file
+                        self.writer.writerow(self.EAR) #write the average eye aspect ratio to the csv file
+                        self.f.close()
                         self.notifier.show_toast("Relaxed Configuration Complete","", duration=5, threaded=True)		#display tray notification
                         self.loop = False 
                         
@@ -94,7 +126,6 @@ class config:
         (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
         self.counter = 0
         self.loop = True
-        self.openFile()
         while self.loop == True:
             frame = self.vs.read()
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -111,7 +142,9 @@ class config:
                     self.counter += 1
                     if self.counter >= 5:
                         self.averages('Blinks')
-                        with self.file as csvfile:
-                            self.writer.writerow(['CEAR',np.mean(self.EAR)]) #write the average eye aspect ratio to the csv file
+                        self.checkFile('Blinks')
+                        self.openFile()
+                        self.writer.writerow(self.EAR) #write the average eye aspect ratio to the csv file
+                        self.f.close()
                         self.notifier.show_toast("Blink Configuration Complete","", duration=5, threaded=True)		#display tray notification
                         self.loop = False 
