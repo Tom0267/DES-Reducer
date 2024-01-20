@@ -16,7 +16,6 @@ import cv2
  
 brightnessControl = BrightnessControl()					#initialize the brightness control class
 notifier = ToastNotifier()								#initialize the notifier
-eyeMovement = EyeMovement(notifier)						#initialize the eye movement class
 breakCheck = breakTime(notifier)						#initialize the break check class
 
 detector = dlib.get_frontal_face_detector() 											#initialize dlib's face detector
@@ -26,7 +25,7 @@ predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.da
 
 config = GUI(detector, predictor, notifier)													#configure the application to the user's face
 vs = VideoStream(src=0).start()															#start the video stream thread
-
+eyeMovement = EyeMovement(notifier)						#initialize the eye movement class
 while True:
 	frame = vs.read()																	#read the frame from the threaded video stream
 	brightness = threading.Thread(brightnessControl.update(frame))						#start the brightness control thread

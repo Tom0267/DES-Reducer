@@ -1,6 +1,7 @@
 from imutils.video import FileVideoStream, VideoStream
 from imutils import face_utils
 from EyeArea import Eyes
+import pandas as pd
 import numpy as np
 import threading
 import imutils
@@ -8,7 +9,6 @@ import dlib
 import cv2
 import csv
 class EyeMovement:
-
     def checkMovement(self,leftEye,rightEye):
         self.leftEAR = self.eyeArea.eye_aspect_ratio(leftEye)				#left eye aspect ratio
         self.rightEAR = self.eyeArea.eye_aspect_ratio(rightEye)			#right eye aspect ratio
@@ -51,13 +51,19 @@ class EyeMovement:
         self.eyeArea = Eyes()					                #initialize the eye area class
         self.blink1 = np.datetime64('now')                      #initializes blink1
         self.blink2 = np.datetime64('now')                      #initializes blink2
+        self.dataframe = pd.DataFrame(columns=['Labels', 'Values'])    #initializes the dataframe
+        self.dataframe = pd.read_csv('Resources/configData.csv')        #read the configuration file
+        print(self.dataframe)
         self.leftEye = 0                                        #initializes left eye
         self.rightEye = 0                                       #initializes right eye
         self.ear = 0.00                                         #initializes eye aspect ratio
         self.leftEyeHull = 0                                    #initializes eye hull
         self.rightEyeHull = 0                                   #initializes eye hull
-        self.blinkThresh = 0.25						            #threshold for eye aspect ratio to count as a blink
-        self.squintThresh = 0.29						        #threshold for eye aspect ratio to count as a squint
+        self.blinkThresh = self.dataframe['Values'].loc[self.dataframe.index[self.dataframe['Labels'] == 'CEAR']].tolist()        #threshold for eye aspect ratio to count as a blink
+        self.blinkThresh = self.blinkThresh[0] + 0.05
+        self.squintThresh = self.dataframe['Values'].loc[self.dataframe.index[self.dataframe['Labels'] == 'EAR']].tolist()		#threshold for eye aspect ratio to count as a squint
+        self.squintThresh = self.squintThresh[0] - 0.02
+        print(self.squintThresh)
         self.blinkConsecFrames = 2					            #number of consecutive frames the eye must be below the threshold for to count as a blink
         self.squintConsecFrames = 5				                #number of consecutive frames the eye must be below the threshold for to count as a squinting
         self.blinkCounter = 0									#frame blink Counter

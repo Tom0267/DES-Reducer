@@ -33,12 +33,14 @@ class config:
         else:
             self.searchString = ['CEAR']                                                #defines search values for blinking function
         for label in self.searchString:                                                 #searches for values in dataframe
-            indexes = self.dataframe[self.dataframe['Labels'] == label].index           #gets index of values that satisfy conditions
-        self.dataframe.drop(indexes, inplace = True)                                    #removes row from dataframe
+            self.dataframe.drop(self.dataframe.index[self.dataframe['Labels'] == label], inplace = True)   #drops values from dataframe
         
     def saveDataFrame(self):
-        self.dataframe.to_csv('Resources/configData.csv', index = False, header = False)     #save the dataframe to the csv file
-    
+        self.clearFile()                                                                    #clears contents of csv
+        temp = self.dataframe.copy()                                                        #creates copy of dataframe
+        self.dataframe.to_csv('Resources/configData.csv', index = False, header = True)     #save the dataframe to the csv file
+        self.dataframe = temp.copy()                                                        #reverts dataframe to original state
+        
     def clearFile(self):           
         self.f = open('Resources/configData.csv', 'w')		                #open the csv file
         self.writer = csv.writer(self.f)                                     #create the csv writer
