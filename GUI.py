@@ -27,15 +27,13 @@ class GUI(customtkinter.CTk):
         self.videoLoop()                                                                        #start the video loop
         self.app.mainloop()                                                                     #start the GUI loop                                      
         
-    def onClose(self):
-        #self.file.close()                                                                       #close the file        
+    def onClose(self):       
         self.vs.stop()                                                                          #stop the video stream                
         self.app.quit()                                                                         #close the GUI
         self.app.destroy()                                                                      #destroy the GUI                          
         
     def Blinks(self):
         self.relaxButton.configure(fg_color='#1f538d')                                              #change the color of the relax button
-        self.distanceButton.configure(fg_color='#1f538d')                                           #change the color of the distance button
         self.BlinksButton.configure(fg_color='green')                                               #change the color of the blink button
         self.Description.configure(state = "normal")                                                #enable editing textbox 
         self.Description.delete("0.0", 'end')                                                       #clear the textbox             
@@ -46,23 +44,12 @@ class GUI(customtkinter.CTk):
     
     def Relax(self):
         self.BlinksButton.configure(fg_color='#1f538d')                                                                                       #change the color of the blink button
-        self.distanceButton.configure(fg_color='#1f538d')                                                                                     #change the color of the distance button
         self.relaxButton.configure(fg_color='green')                                                                                          #change the color of the relax button
         self.Description.configure(state = "normal")                                                                                          #enable editing textbox 
         self.Description.delete("0.0", 'end')                                                                                                 #clear the textbox                     
         self.Description.insert("0.0", "Please look to the center of the screen and relax while I configure. Press Configure to begin.")      #display instructions
         self.Description.configure(state = "disabled")                                                                                        #disable editing textbox                      
         self.ConfigureButton.configure(command = self.config.configureRelax)                                                                  #change the command of the configure button to configure relax
-        
-    def Distance(self):
-        self.BlinksButton.configure(fg_color='#1f538d')                                                                                       #change the color of the blink button
-        self.relaxButton.configure(fg_color='#1f538d')                                                                                       #change the color of the relax button
-        self.distanceButton.configure(fg_color='green')                                                                                      #change the color of the distance button
-        self.Description.configure(state = "normal")                                                                                          #enable editing textbox 
-        self.Description.delete("0.0", 'end')                                                                                                 #clear the textbox                     
-        self.Description.insert("0.0", "Please look to the center of the screen and relax while I configure. Press Configure to begin.")      #display instructions
-        self.Description.configure(state = "disabled")                                                                                        #disable editing textbox                      
-        self.ConfigureButton.configure(command = self.config.configureDistance)                                                               #change the command of the configure button to configure relax
     
     def __init__(self, detector, predictor, notifier):
         self.vs = VideoStream(src=0).start()                                        #start the video stream thread
@@ -99,8 +86,6 @@ class GUI(customtkinter.CTk):
         self.BlinksButton.pack(padx=10, pady=10)                                                                                                    #add the blink button to the button frame
         self.relaxButton = customtkinter.CTkButton(self.ButtonFrame, text="Configure Relax", command= self.Relax, hover_color='blue')               #create the relax button
         self.relaxButton.pack(padx=10, pady=10)                                                                                                     #add the relax button to the button frame
-        self.distanceButton = customtkinter.CTkButton(self.ButtonFrame, text="Configure Distance", command= self.Distance, hover_color='blue')   #create the distance button
-        self.distanceButton.pack(padx=10, pady=10)                                                                                                  #add the distance button to the button frame
         
         self.Description = customtkinter.CTkTextbox(self.TextFrame)                                                                                 #create the textbox
         self.Description.insert('0.0',"Please align the monitor at eye level 2ft away from your face then select a configuration option on the left pannel to begin.")      #add the instructions to the textbox
