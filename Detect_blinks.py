@@ -1,5 +1,6 @@
 from imutils.video import FileVideoStream, VideoStream
 from ScreenBrightness import BrightnessControl
+from DistanceCalc import DistanceCalculator
 from EyeMovements import EyeMovement
 from win10toast import ToastNotifier
 from BreakReminder import breakTime
@@ -17,6 +18,7 @@ import cv2
 brightnessControl = BrightnessControl()					#initialize the brightness control class
 notifier = ToastNotifier()								#initialize the notifier
 breakCheck = breakTime(notifier)						#initialize the break check class
+distanceCalc = DistanceCalculator(notifier)				#initialize the distance calculator class
 
 detector = dlib.get_frontal_face_detector() 											#initialize dlib's face detector
 predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.dat")		#initialize dlib's facial landmark predictorqqqqqq
@@ -32,6 +34,7 @@ while True:
 	breakTime = threading.Thread(breakCheck.checkBreak())								#start the break check thread
 	brightness.start()											#start the brightness control thread
 	breakTime.start()											#start the break check thread
+	
 	frame = imutils.resize(frame, width=450)
 	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 	
@@ -45,6 +48,10 @@ while True:
 			
 			leftEye = shape[lStart:lEnd]							#extract the left and right eye coordinates, then use the coordinates to calculate the eye aspect ratio for both eyes
 			rightEye = shape[rStart:rEnd]
+			
+			dist = threading.Thread(distanceCalc.checkDist(leftEye,rightEye))						#start the brightness control thread
+			dist.start()											#start the brightness control thread
+			
 			eyeMovement.checkMovement(leftEye,rightEye)				#check if the eyes are blinking or squinting
 			leftEyeHull, rightEyeHull = eyeMovement.getHull()
 			cv2.drawContours(frame, [leftEyeHull], -1, (0, 255, 0), 1)			#draw the hull around the left eye
@@ -54,8 +61,10 @@ while True:
 			cv2.putText(frame, "Blinks: {}".format(total), (10, 30),cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)				#draw the total number of blinks on the frame
 			cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30),cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)				#draw the calculated eye aspect ratio on the frame
 		cv2.imshow("Eye Care", frame)						#show the frame
+		
 		brightness.join()									#join the brightness control thread
 		breakTime.join()									#join the break check thread
+		dist.join()											#join the distance calculator thread
 
 		if cv2.waitKey(30) & 0xFF ==ord('q'):				#press q to quit
 			break

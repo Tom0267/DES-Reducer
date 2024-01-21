@@ -53,7 +53,6 @@ class EyeMovement:
         self.blink2 = np.datetime64('now')                      #initializes blink2
         self.dataframe = pd.DataFrame(columns=['Labels', 'Values'])    #initializes the dataframe
         self.dataframe = pd.read_csv('Resources/configData.csv')        #read the configuration file
-        print(self.dataframe)
         self.leftEye = 0                                        #initializes left eye
         self.rightEye = 0                                       #initializes right eye
         self.ear = 0.00                                         #initializes eye aspect ratio
@@ -63,7 +62,6 @@ class EyeMovement:
         self.blinkThresh = self.blinkThresh[0] + 0.05
         self.squintThresh = self.dataframe['Values'].loc[self.dataframe.index[self.dataframe['Labels'] == 'EAR']].tolist()		#threshold for eye aspect ratio to count as a squint
         self.squintThresh = self.squintThresh[0] - 0.02
-        print(self.squintThresh)
         self.blinkConsecFrames = 2					            #number of consecutive frames the eye must be below the threshold for to count as a blink
         self.squintConsecFrames = 5				                #number of consecutive frames the eye must be below the threshold for to count as a squinting
         self.blinkCounter = 0									#frame blink Counter

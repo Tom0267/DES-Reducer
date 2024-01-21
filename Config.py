@@ -61,13 +61,17 @@ class config:
             self.LEMDistance = np.mean(self.LEMDistances)						#compute the average distance between the left eye and the mouth
             self.REMDistance = np.mean(self.REMDistances)						#compute the average distance between the right eye and the mouth
             self.EAR = np.mean(self.ear)										#compute the average eye aspect ratio
-        else:
+        elif func == 'Blinks':
             self.CEAR = np.mean(self.ear)                                        #compute the average closed eye aspect ratio
+        elif func == 'Distance':
+            self.EEDistance = np.mean(self.EEdistances)							#compute the average distance between the eyes
+            self.LEMDistance = np.mean(self.LEMDistances)						#compute the average distance between the left eye and the mouth
+            self.REMDistance = np.mean(self.REMDistances)						#compute the average distance between the right eye and the mouth
 
     def calculateEAR(self, leftEye, rightEye):
         leftEAR = self.eyeArea.eye_aspect_ratio(leftEye)				#left eye aspect ratio
-        rightEAR = self.eyeArea.eye_aspect_ratio(rightEye)			#right eye aspect ratio
-        self.ear.append((leftEAR + rightEAR) / 2.0)				#append the average the eye aspect ratio together for both eyes
+        rightEAR = self.eyeArea.eye_aspect_ratio(rightEye)			    #right eye aspect ratio
+        self.ear.append((leftEAR + rightEAR) / 2.0)				        #append the average the eye aspect ratio together for both eyes
     
     def checkCamera(self, vs):
         if not vs.stream.isOpened():																#check if the video stream was opened correctly
@@ -139,3 +143,28 @@ class config:
                         self.loop = False 
         if self.blinked == True and self.relaxed == True:
             self.saveDataFrame()
+            
+    def configureDistance(self):
+        self.checkCamera(self.vs)
+        (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]							#grab the indexes of the facial landmarks for the left eye
+        (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
+        self.loop = True
+        self.counter = 0
+        while self.loop == True:
+            frame = self.vs.read()
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            faces = self.detector(gray, 0)									#detect faces in the grayscale frame
+            if not faces:												#check if a face was detected
+                self.notifier.show_toast("No Face Detected", "Ensure your face is in the frame.", duration=5, threaded=True)		#display tray notification
+            else:
+                for face in faces:
+                    shape = self.predictor(gray, face)							#determine the facial landmarks for the face region, then convert the facial landmark (x, y)-coordinates to a NumPy array
+                    shape = face_utils.shape_to_np(shape)
+                    leftEye = shape[lStart:lEnd]							#extract the left and right eye coordinates, then use the coordinates to calculate the eye aspect ratio for both eyes
+                    rightEye = shape[rStart:rEnd]
+                    mouth = shape[mStart:mEnd]
+                    self.calculateDistance(leftEye,rightEye,mouth)     #calculate the distance between the eyes
+                    if counter >= 5:
+                        self.averages('Distance')
+                        self.notifier.show_toast("Distance Configuration Complete","", duration=5, threaded=True)        #display tray notification
+                    
