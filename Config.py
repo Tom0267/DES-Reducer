@@ -43,7 +43,7 @@ class config:
         
     def clearFile(self):           
         self.f = open('Resources/configData.csv', 'w')		                #open the csv file
-        self.writer = csv.writer(self.f)                                     #create the csv writer
+        self.writer = csv.writer(self.f)                                    #create the csv writer
         self.f.truncate(0)                               #clears contents of csv
         self.f.close
     
@@ -69,8 +69,8 @@ class config:
             self.REMDistance = np.mean(self.REMDistances)						#compute the average distance between the right eye and the mouth
 
     def calculateEAR(self, leftEye, rightEye):
-        leftEAR = self.eyeArea.eye_aspect_ratio(leftEye)				#left eye aspect ratio
-        rightEAR = self.eyeArea.eye_aspect_ratio(rightEye)			    #right eye aspect ratio
+        leftEAR = self.eyeArea.eyeAspectRatio(leftEye)				#left eye aspect ratio
+        rightEAR = self.eyeArea.eyeAspectRatio(rightEye)			    #right eye aspect ratio
         self.ear.append((leftEAR + rightEAR) / 2.0)				        #append the average the eye aspect ratio together for both eyes
     
     def checkCamera(self, vs):

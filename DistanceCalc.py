@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 class DistanceCalculator:
     def checkDist(self, leftEye, rightEye):
-        coff = np.polyfit(self.distance_pixel, self.distance_cm, 2)         # get corrlation coffs
+        coff = np.polyfit(self.distance_pixel, self.distance_cm, 2)         #get corrlation coffs
         a, b, c = coff                                                      #unpack the coffs
                   
         leftEyeCenter = leftEye.mean(axis=0)				    #compute the center of mass for each eye

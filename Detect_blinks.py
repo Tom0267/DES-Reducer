@@ -25,13 +25,13 @@ predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.da
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]							#grab the indexes of the facial landmarks for the left eye
 (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
 
-config = GUI(detector, predictor, notifier)													#configure the application to the user's face
+config = GUI(detector, predictor, notifier)												#configure the application to the user's face
 vs = VideoStream(src=0).start()															#start the video stream thread
-eyeMovement = EyeMovement(notifier)						#initialize the eye movement class
+eyeMovement = EyeMovement(notifier)														#initialize the eye movement class
 while True:
     if not vs.stream.isOpened():																#check if the video stream was opened correctly
         self.notifier.show_toast("Cannot open camera", "Ensure your camera is connected.", duration=5, threaded=True)		#display tray notification
-        exit()
+        exit()																			#exit the program	
         
     frame = vs.read()																	#read the frame from the threaded video stream
     brightness = threading.Thread(brightnessControl.update(frame))						#start the brightness control thread
@@ -39,8 +39,8 @@ while True:
     brightness.start()											#start the brightness control thread
     breakTime.start()											#start the break check thread
     
-    frame = imutils.resize(frame, width=450)
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    frame = imutils.resize(frame, width=450)					#resize the frame
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)				#convert the frame to grayscale
     
     faces = detector(gray, 0)									#detect faces in the grayscale frame
     if not faces:												#check if a face was detected

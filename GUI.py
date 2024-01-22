@@ -80,7 +80,7 @@ class GUI(customtkinter.CTk):
         
         self.label_widget = customtkinter.CTkLabel(self.VideoFrame, text="")        #create the label widget
         self.label_widget.pack()                                                    #add the label widget to the video frame
-        self.ConfigureButton = customtkinter.CTkButton(self.middleFrame, text="Configure", command= None, hover_color='blue')      #create the configure button
+        self.ConfigureButton = customtkinter.CTkButton(self.middleFrame, text="Configure", command= None, hover_color='blue')                       #create the configure button
         self.ConfigureButton.pack(padx=10, pady=10,)                                                                                                #add the configure button to the middle frame
         self.BlinksButton = customtkinter.CTkButton(self.ButtonFrame, text="Configure Blinks", command= self.Blinks, hover_color='blue')            #create the blink button
         self.BlinksButton.pack(padx=10, pady=10)                                                                                                    #add the blink button to the button frame
