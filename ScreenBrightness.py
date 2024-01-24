@@ -9,7 +9,7 @@ class BrightnessControl:
         return camera
 
     def calculateBrightness(self, image):
-        average_brightness = (cv2.mean(image)[0] / 255.0) *20               #calculate the average brightness of the image
+        average_brightness = (cv2.mean(image)[0] / 255.0)                       #calculate the average brightness of the image
         return average_brightness
 
     def setBrightness(self, brightness):
@@ -17,11 +17,12 @@ class BrightnessControl:
         sbc.set_brightness(brightness)                                      #set brightness
 
     def update(self, frame):
-        brightness = self.calculateBrightness(frame) * 100
+        brightness = self.calculateBrightness(frame) * 500
+        print(brightness)
         self.setBrightness(brightness)
         
     def __init__(self):
-        self.brightness_offset = 20                     #adjust to offset the brightness up/down. 
+        self.brightness_offset = 0                     #adjust to offset the brightness up/down. 
         self.cameraIndex = 0                            #select camera
         self.exposureValue = 15                          #use in with brightness_offset. A lower number means lower brightness.
         self.cameraExposure()

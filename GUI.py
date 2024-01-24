@@ -47,7 +47,7 @@ class GUI(customtkinter.CTk):
         self.relaxButton.configure(fg_color='green')                                                                                          #change the color of the relax button
         self.Description.configure(state = "normal")                                                                                          #enable editing textbox 
         self.Description.delete("0.0", 'end')                                                                                                 #clear the textbox                     
-        self.Description.insert("0.0", "Please look to the center of the screen and relax while I configure. Press Configure to begin.")      #display instructions
+        self.Description.insert("0.0", "Please look to the center of the screen and relax while I configure.\nPress Configure to begin.")      #display instructions
         self.Description.configure(state = "disabled")                                                                                        #disable editing textbox                      
         self.ConfigureButton.configure(command = self.config.configureRelax)                                                                  #change the command of the configure button to configure relax
     
@@ -88,7 +88,7 @@ class GUI(customtkinter.CTk):
         self.relaxButton.pack(padx=10, pady=10)                                                                                                     #add the relax button to the button frame
         
         self.Description = customtkinter.CTkTextbox(self.TextFrame)                                                                                 #create the textbox
-        self.Description.insert('0.0',"Please align the monitor at eye level 2ft away from your face then select a configuration option on the left pannel to begin.")      #add the instructions to the textbox
+        self.Description.insert('0.0',"Please align the monitor just below eye level 2ft away from your face then select a configuration option on the left pannel to begin.")      #add the instructions to the textbox
         self.Description.configure(state='disabled', wrap = 'word', font = ('Arial', 20))                      #configure the textbox
         self.Description.pack(padx=10, pady=10, fill='both')                                                   #add the textbox to the text frame
         
