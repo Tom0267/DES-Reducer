@@ -5,6 +5,7 @@ from EyeMovements import EyeMovement
 from win10toast import ToastNotifier
 from BreakReminder import breakTime
 from imutils import face_utils
+from Posture import Postures
 from Config import config
 from time import time
 from GUI import GUI
@@ -14,11 +15,12 @@ import imutils
 import time
 import dlib
 import cv2
- 
-brightnessControl = BrightnessControl()					#initialize the brightness control class
+
 notifier = ToastNotifier()								#initialize the notifier
 breakCheck = breakTime(notifier)						#initialize the break check class
 distanceCalc = DistanceCalculator(notifier)				#initialize the distance calculator class
+brightnessControl = BrightnessControl(notifier)					#initialize the brightness control class
+posture = Postures(notifier)									#initialize the posture class
 
 detector = dlib.get_frontal_face_detector() 											#initialize dlib's face detector
 predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.dat")		#initialize dlib's facial landmark predictorqqqqqq
@@ -40,6 +42,7 @@ while True:
     breakTime.start()											#start the break check thread
     
     frame = imutils.resize(frame, width=450)					#resize the frame
+    posture.checkPosture(frame)								    #check the user's posture
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)				#convert the frame to grayscale
     
     faces = detector(gray, 0)									#detect faces in the grayscale frame

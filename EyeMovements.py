@@ -62,7 +62,6 @@ class EyeMovement:
         self.blinkThresh = self.blinkThresh[0] + 0.06           #threshold for eye aspect ratio to count as a blink
         self.squintThresh = self.dataframe['Values'].loc[self.dataframe.index[self.dataframe['Labels'] == 'EAR']].tolist()		  #gets value from csv file
         self.squintThresh = self.squintThresh[0] + 0.02         #threshold for eye aspect ratio to count as a squint
-        print(self.squintThresh)
         self.blinkConsecFrames = 2					            #number of consecutive frames the eye must be below the threshold for to count as a blink
         self.squintConsecFrames = 5				                #number of consecutive frames the eye must be below the threshold for to count as a squinting
         self.blinkCounter = 0									#frame blink Counter

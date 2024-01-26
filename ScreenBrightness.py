@@ -14,15 +14,17 @@ class BrightnessControl:
 
     def setBrightness(self, brightness):
         brightness = brightness + self.brightness_offset                          #adjust brightness
-        sbc.set_brightness(brightness)                                      #set brightness
+        sbc.set_brightness(brightness)                                            #set brightness
 
     def update(self, frame):
-        brightness = self.calculateBrightness(frame) * 500
-        print(brightness)
+        brightness = self.calculateBrightness(frame) * 200
+        if brightness > 150:
+            notifier.show_toast("Screen Glare", "Adjust your screen to reduce glare.", duration=5, threaded=True)
         self.setBrightness(brightness)
         
-    def __init__(self):
+    def __init__(self, notifier):
+        self.notifier = notifier                       #initialize the notifier
         self.brightness_offset = 0                     #adjust to offset the brightness up/down. 
-        self.cameraIndex = 0                            #select camera
-        self.exposureValue = 15                          #use in with brightness_offset. A lower number means lower brightness.
+        self.cameraIndex = 0                           #select camera
+        self.exposureValue = 15                        #use in with brightness_offset. A lower number means lower brightness.
         self.cameraExposure()
