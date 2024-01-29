@@ -70,7 +70,6 @@ while True:
             cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30),cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)				#draw the calculated eye aspect ratio on the frame
             
         cv2.imshow("Eye Care", frame)						#show the frame
-        
         brightness.join()									#join the brightness control thread
         breakTime.join()									#join the break check thread
         dist.join()											#join the distance calculator thread
