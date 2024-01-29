@@ -37,8 +37,6 @@ class Postures:
     if self.results.pose_landmarks:
       self.landmarkCoordinates()                                                                         #get the coordinates for the landmarks 
     
-      #offset = self.findDistance(self.l_shldr_x, self.l_shldr_y, self.r_shldr_x, self.r_shldr_y)         #calculate the offset between the shoulders
-    
       neckAngle = self.findAngle(self.l_shldr_x, self.l_shldr_y, self.l_ear_x, self.l_ear_y)          #calculate the angle between the left shoulder and left ear
       torsoAngle = self.findAngle(self.nose_x, self.nose_y, self.l_shldr_x, self.l_shldr_y)           #calculate the angle between the nose and left shoulder
 
@@ -48,19 +46,24 @@ class Postures:
       cv2.circle(frame, (self.r_ear_x, self.r_ear_y), 5, (255, 0, 0), -1)
       cv2.circle(frame, (self.nose_x, self.nose_y), 5, (255, 0, 0), -1)
       
-      
-      cv2.line(frame, (self.l_shldr_x, self.l_shldr_y), (self.l_ear_x, self.l_ear_y), (0, 255, 0), 4)
-      cv2.line(frame, (self.l_shldr_x, self.l_shldr_y), (self.r_shldr_x, self.r_shldr_y), (0, 255, 0), 4)
-      cv2.line(frame, (self.l_shldr_x, self.l_shldr_y), (self.nose_x, self.nose_y), (0, 255, 0), 4)
-      cv2.line(frame, (self.nose_x, self.nose_y), (self.r_shldr_x, self.r_shldr_y), (0, 255, 0), 4)
-      cv2.line(frame, (self.r_shldr_x, self.r_shldr_y), (self.r_ear_x, self.r_ear_y), (0, 255, 0), 4)
+      if neckAngle > 26 and neckAngle < 29 and torsoAngle > 136 and torsoAngle < 139:               #check if the user has good posture (angles determined experimentally)
+        status = 'Good Posture'
+        lineColor = (0, 255, 0)
+      else:
+        status = 'Bad Posture'
+        lineColor = (0, 0, 255)
+        
+      cv2.putText(frame, status, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, lineColor, 2)                           #display the status of the user's posture
+      cv2.line(frame, (self.l_shldr_x, self.l_shldr_y), (self.l_ear_x, self.l_ear_y), lineColor, 4)               #draw the lines between the landmarks
+      cv2.line(frame, (self.l_shldr_x, self.l_shldr_y), (self.r_shldr_x, self.r_shldr_y), lineColor, 4)           #draw the lines between the landmarks
+      cv2.line(frame, (self.l_shldr_x, self.l_shldr_y), (self.nose_x, self.nose_y), lineColor, 4)                 #draw the lines between the landmarks
+      cv2.line(frame, (self.nose_x, self.nose_y), (self.r_shldr_x, self.r_shldr_y), lineColor, 4)                 #draw the lines between the landmarks
+      cv2.line(frame, (self.r_shldr_x, self.r_shldr_y), (self.r_ear_x, self.r_ear_y), lineColor, 4)               #draw the lines between the landmarks    
     
-      #self.mpDrawing.draw_landmarks(frame, self.results.pose_landmarks, self.mpPose.POSE_CONNECTIONS)
-    cv2.imshow('Posture', frame)
+      cv2.putText(frame, 'Neck : ' + str(int(neckAngle)) + '  Torso : ' + str(int(torsoAngle)), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)        #display neck and torse angles
+    cv2.imshow('Posture', frame)          #show the frame
  
   def __init__(self, notifier):
-    self.notifier = notifier
-    self.mpDrawing = mp.solutions.drawing_utils
-    self.mpPose = mp.solutions.pose
-    self.pose = self.mpPose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
-    self.keyPoints = self.mpPose.PoseLandmark
+    self.notifier = notifier                                                                            #initialize the notifier
+    self.pose = mp.solutions.pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)       #initialize the pose class with the confidence values
+    self.keyPoints = mp.solutions.pose.PoseLandmark                                                     #initialize the pose landmarks 

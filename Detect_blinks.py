@@ -36,16 +36,18 @@ while True:
         exit()																			#exit the program	
         
     frame = vs.read()																	#read the frame from the threaded video stream
-    brightness = threading.Thread(brightnessControl.update(frame))						#start the brightness control thread
-    breakTime = threading.Thread(breakCheck.checkBreak())								#start the break check thread
+    frame = imutils.resize(frame, width=450)					#resize the frame
+    
+    brightness = threading.Thread(brightnessControl.update(frame))						#create the brightness control thread
+    pose = threading.Thread(posture.checkPosture(frame))		                        #create the posture check thread
+    breakTime = threading.Thread(breakCheck.checkBreak())								#create the break check thread
     brightness.start()											#start the brightness control thread
     breakTime.start()											#start the break check thread
+    pose.start()												#start the posture check thread
     
-    frame = imutils.resize(frame, width=450)					#resize the frame
-    posture.checkPosture(frame)								    #check the user's posture
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)				#convert the frame to grayscale
-    
     faces = detector(gray, 0)									#detect faces in the grayscale frame
+    
     if not faces:												#check if a face was detected
         notifier.show_toast("No Face Detected", "Ensure your face is in the frame.", duration=5, threaded=True)		#display tray notification
     else:
@@ -56,7 +58,7 @@ while True:
             leftEye = shape[lStart:lEnd]							#extract the left and right eye coordinates, then use the coordinates to calculate the eye aspect ratio for both eyes
             rightEye = shape[rStart:rEnd]
             
-            dist = threading.Thread(distanceCalc.checkDist(leftEye,rightEye))						#start the brightness control thread
+            dist = threading.Thread(distanceCalc.checkDist(leftEye,rightEye))						#create the distance calculator thread
             dist.start()											#start the brightness control thread
             
             eyeMovement.checkMovement(leftEye,rightEye)				#check if the eyes are blinking or squinting
@@ -73,6 +75,7 @@ while True:
         brightness.join()									#join the brightness control thread
         breakTime.join()									#join the break check thread
         dist.join()											#join the distance calculator thread
+        pose.join()											#join the posture check thread
         
         if cv2.waitKey(30) & 0xFF ==ord('q'):				#press q to quit
             break
