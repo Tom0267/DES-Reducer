@@ -47,6 +47,13 @@ class Postures:
       cv2.circle(frame, (self.l_ear_x, self.l_ear_y), 5, (255, 0, 0), -1)
       cv2.circle(frame, (self.r_ear_x, self.r_ear_y), 5, (255, 0, 0), -1)
       cv2.circle(frame, (self.nose_x, self.nose_y), 5, (255, 0, 0), -1)
+      
+      
+      cv2.line(frame, (self.l_shldr_x, self.l_shldr_y), (self.l_ear_x, self.l_ear_y), (0, 255, 0), 4)
+      cv2.line(frame, (self.l_shldr_x, self.l_shldr_y), (self.r_shldr_x, self.r_shldr_y), (0, 255, 0), 4)
+      cv2.line(frame, (self.l_shldr_x, self.l_shldr_y), (self.nose_x, self.nose_y), (0, 255, 0), 4)
+      cv2.line(frame, (self.nose_x, self.nose_y), (self.r_shldr_x, self.r_shldr_y), (0, 255, 0), 4)
+      cv2.line(frame, (self.r_shldr_x, self.r_shldr_y), (self.r_ear_x, self.r_ear_y), (0, 255, 0), 4)
     
       #self.mpDrawing.draw_landmarks(frame, self.results.pose_landmarks, self.mpPose.POSE_CONNECTIONS)
     cv2.imshow('Posture', frame)
