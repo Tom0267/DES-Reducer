@@ -17,7 +17,7 @@ import dlib
 import cv2
 
 notifier = ToastNotifier()								#initialize the notifier
-breakCheck = breakTime(notifier)						#initialize the break check class
+breakCheck = breakTime(notifier)						#initializ  e the break check class
 distanceCalc = DistanceCalculator(notifier)				#initialize the distance calculator class
 brightnessControl = BrightnessControl(notifier)					#initialize the brightness control class
 posture = Postures(notifier)									#initialize the posture class
@@ -36,7 +36,7 @@ while True:
         exit()																			#exit the program	
         
     frame = vs.read()																	#read the frame from the threaded video stream
-    frame = imutils.resize(frame, width=450)					#resize the frame
+    frame = imutils.resize(frame, height=337, width=450)					            #resize the frame
     
     brightness = threading.Thread(brightnessControl.update(frame))						#create the brightness control thread
     pose = threading.Thread(posture.checkPosture(frame))		                        #create the posture check thread
