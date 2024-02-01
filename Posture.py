@@ -49,36 +49,35 @@ class Postures:
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)                                                #convert the frame from RGB to BGR
     if self.results.pose_landmarks:
       self.landmarkCoordinates()                                                                         #get the coordinates for the landmarks 
-      self.checkElbows()                                                                                 #check the position of the elbows
     
       neckAngle = self.findAngle(self.leftShldr_x, self.leftShldr_y, self.leftEar_x, self.leftEar_y)          #calculate the angle between the left shoulder and left ear
-      torsoAngle = self.findAngle(self.nose_x, self.nose_y, self.leftShldr_x, self.leftShldr_y)           #calculate the angle between the nose and left shoulder
+      torsoAngle = self.findAngle(self.nose_x, self.nose_y, self.leftShldr_x, self.leftShldr_y)               #calculate the angle between the nose and left shoulder
 
-      cv2.circle(frame, (self.leftShldr_x, self.leftShldr_y), 5, (255, 0, 0), -1)                         #draw the circles for the left shoulder
+      cv2.circle(frame, (self.leftShldr_x, self.leftShldr_y), 5, (255, 0, 0), -1)                           #draw the circles for the left shoulder
       cv2.circle(frame, (self.rightShldr_x, self.rightShldr_y), 5, (255, 0, 0), -1)                         #draw the circles for the right shoulder
-      cv2.circle(frame, (self.leftEar_x, self.leftEar_y), 5, (255, 0, 0), -1)                             #draw the circles for the left ear
+      cv2.circle(frame, (self.leftEar_x, self.leftEar_y), 5, (255, 0, 0), -1)                               #draw the circles for the left ear
       cv2.circle(frame, (self.rightEar_x, self.rightEar_y), 5, (255, 0, 0), -1)                             #draw the circles for the right ear
-      cv2.circle(frame, (self.nose_x, self.nose_y), 5, (255, 0, 0), -1)                               #draw the circles for the nose
-      cv2.circle(frame, (self.leftElbow_x, self.leftElbow_y), 5, (255, 0, 0), -1)                         #draw the circles for the left elbow
+      cv2.circle(frame, (self.nose_x, self.nose_y), 5, (255, 0, 0), -1)                                     #draw the circles for the nose
+      cv2.circle(frame, (self.leftElbow_x, self.leftElbow_y), 5, (255, 0, 0), -1)                           #draw the circles for the left elbow
       cv2.circle(frame, (self.rightElbow_x, self.rightElbow_y), 5, (255, 0, 0), -1)                         #draw the circles for the right elbow  
       
       if neckAngle > 26 and neckAngle < 29 and torsoAngle > 136 and torsoAngle < 139:               #check if the user has good posture (angles determined experimentally)
-        status = 'Good Posture'
-        lineColor = (0, 255, 0)
+        status = 'Good Posture'                                                                     #set the status to good posture   
+        lineColor = (0, 255, 0)                                                                     #set the line color to green if the user has good posture  
       else:
-        status = 'Bad Posture'
-        lineColor = (0, 0, 255)
-        self.badFrames += 1
+        status = 'Bad Posture'                                                               #set the status to bad posture 
+        lineColor = (0, 0, 255)                                                              #set the line color to red if the user has bad posture
+        self.badFrames += 1                                                                  #increment the bad posture frames counter
         if self.badFrames >= 15:
           self.notifier.show_toast("Bad Posture Detected", "Ensure you are sitting up straight.", duration=5, threaded=True)		#display tray notification
-          self.badFrames = 0
+          self.badFrames = 0                                                                                   #reset the bad posture frames counter    
         
-      cv2.putText(frame, status, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, lineColor, 2)                           #display the status of the user's posture
-      cv2.line(frame, (self.leftShldr_x, self.leftShldr_y), (self.leftEar_x, self.leftEar_y), lineColor, 4)               #draw the lines between the landmarks
+      cv2.putText(frame, status, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, lineColor, 2)                                     #display the status of the user's posture
+      cv2.line(frame, (self.leftShldr_x, self.leftShldr_y), (self.leftEar_x, self.leftEar_y), lineColor, 4)                 #draw the lines between the landmarks
       cv2.line(frame, (self.leftShldr_x, self.leftShldr_y), (self.rightShldr_x, self.rightShldr_y), lineColor, 4)           #draw the lines between the landmarks
-      cv2.line(frame, (self.leftShldr_x, self.leftShldr_y), (self.nose_x, self.nose_y), lineColor, 4)                 #draw the lines between the landmarks
-      cv2.line(frame, (self.nose_x, self.nose_y), (self.rightShldr_x, self.rightShldr_y), lineColor, 4)                 #draw the lines between the landmarks
-      cv2.line(frame, (self.rightShldr_x, self.rightShldr_y), (self.rightEar_x, self.rightEar_y), lineColor, 4)               #draw the lines between the landmarks    
+      cv2.line(frame, (self.leftShldr_x, self.leftShldr_y), (self.nose_x, self.nose_y), lineColor, 4)                       #draw the lines between the landmarks
+      cv2.line(frame, (self.nose_x, self.nose_y), (self.rightShldr_x, self.rightShldr_y), lineColor, 4)                     #draw the lines between the landmarks
+      cv2.line(frame, (self.rightShldr_x, self.rightShldr_y), (self.rightEar_x, self.rightEar_y), lineColor, 4)             #draw the lines between the landmarks    
     
       cv2.putText(frame, 'Neck : ' + str(int(neckAngle)) + '  Torso : ' + str(int(torsoAngle)), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)        #display neck and torse angles
     cv2.imshow('Posture', frame)          #show the frame

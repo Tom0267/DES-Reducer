@@ -23,7 +23,8 @@ brightnessControl = BrightnessControl(notifier)					#initialize the brightness c
 posture = Postures(notifier)									#initialize the posture class
 
 detector = dlib.get_frontal_face_detector() 											#initialize dlib's face detector
-predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.dat")		#initialize dlib's facial landmark predictorqqqqqq
+predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.dat")		#initialize dlib's facial landmark predictor
+
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]							#grab the indexes of the facial landmarks for the left eye
 (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
 
