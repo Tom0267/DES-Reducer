@@ -15,9 +15,8 @@ class Postures:
   def checkElbows(self):
     left_elbow = self.imagePoints.landmark[self.keyPoints.LEFT_ELBOW]
     right_elbow = self.imagePoints.landmark[self.keyPoints.RIGHT_ELBOW]
-    if left_elbow and self.checkOnScreen(left_elbow):
-      self.notifier.show_toast("Stretching Detected", "If you're tired or uncomfortable, consider taking break.", duration=5, threaded=True)		#display tray notification
-    elif right_elbow and self.checkOnScreen(right_elbow):
+    print(left_elbow and self.checkOnScreen(left_elbow) and right_elbow and self.checkOnScreen(right_elbow))
+    if left_elbow and self.checkOnScreen(left_elbow) and right_elbow and self.checkOnScreen(right_elbow):
       self.notifier.show_toast("Stretching Detected", "If you're tired or uncomfortable, consider taking break.", duration=5, threaded=True)		#display tray notification
   
   def landmarkCoordinates(self):
@@ -60,6 +59,8 @@ class Postures:
       cv2.circle(frame, (self.nose_x, self.nose_y), 5, (255, 0, 0), -1)                                     #draw the circles for the nose
       cv2.circle(frame, (self.leftElbow_x, self.leftElbow_y), 5, (255, 0, 0), -1)                           #draw the circles for the left elbow
       cv2.circle(frame, (self.rightElbow_x, self.rightElbow_y), 5, (255, 0, 0), -1)                         #draw the circles for the right elbow  
+      
+      self.checkElbows()                                                                                   #check if the user is stretching
       
       if neckAngle > 26 and neckAngle < 29 and torsoAngle > 136 and torsoAngle < 139:               #check if the user has good posture (angles determined experimentally)
         status = 'Good Posture'                                                                     #set the status to good posture   
