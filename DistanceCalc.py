@@ -1,3 +1,4 @@
+from plyer import notification
 import pandas as pd
 import numpy as np
 import cv2
@@ -12,12 +13,11 @@ class DistanceCalculator:
         
         distance_cm = a*eyeDistance**2+b*eyeDistance+c-18                      #calculate the distance in cm
         if distance_cm < 55:                                                                                                        #for safe use, distance to screen should be grater than 51 cm
-            self.notifier.show_toast("Too Close To Screen", f'{int(distance_cm)} cm - Not Safe', duration=5, threaded=True)		#display tray notification
+            notification.notify("Too Close To Screen", f'{int(distance_cm)} cm - Not Safe')		#display tray notification
         elif distance_cm > 70:                                                                                                      #check if the distance is greater than 65 cm
-            self.notifier.show_toast("Too Far From Screen", f'{int(distance_cm)} cm - Not Safe', duration=5, threaded=True)		#display tray notification            
+            notification.notify("Too Far From Screen", f'{int(distance_cm)} cm - Not Safe')		#display tray notification            
     
-    def __init__(self, notifier):
+    def __init__(self):
         distance_df = pd.read_csv('distance_xy.csv')            #read the csv data
         self.distance_pixel = distance_df['distance_pixel']     #read the distance data
         self.distance_cm = distance_df['distance_cm']           #read the distance data
-        self.notifier = notifier                                #initialize the notifier

@@ -1,5 +1,6 @@
 from imutils.video import FileVideoStream, VideoStream
 from imutils import face_utils
+from plyer import notification
 from EyeArea import Eyes
 import pandas as pd
 import numpy as np
@@ -23,9 +24,9 @@ class EyeMovement:
                 self.total += 1
                 self.blink2 = np.datetime64('now')					    #record the time of the blink
                 if self.blink2 - self.blink1 >  8:						#check if the time between blinks is greater than 8 seconds
-                    self.notifier.show_toast("Don't Forget To Blink", "For healthy eyes, you should be blinking every 5 seconds.", duration=5, threaded=True)
+                    notification.notify("Don't Forget To Blink", "For healthy eyes, you should be blinking every 5 seconds.")
                 elif self.blink2 - self.blink1 < 2:						#check if the time between blinks is less than 2
-                    self.notifier.show_toast("Rapid Blinking", "Take a break from the screen to ensure your eyes stay healythy.", duration=5, threaded=True)
+                    notification.notify("Rapid Blinking", "Take a break from the screen to ensure your eyes stay healythy.")
         else :
             self.blinkCounter = 0								                #reset the eye frame blink Counter
             self.blink1 = self.blink2
@@ -33,7 +34,7 @@ class EyeMovement:
         if self.ear <= self.squintThresh:										#check is eye aspect ratio is below the squint threshold
             self.squintCounter += 1										        #increment the squint Counter
             if self.squintCounter >= self.squintConsecFrames:					#if the eyes were closed for a sufficient number of frames increment the total number of squints
-                self.notifier.show_toast("Squinting Detected", "Ensure you have proper lighting and are not too close to the screen.", duration=5, threaded=True)		#display tray notification
+                notification.notify("Squinting Detected", "Ensure you have proper lighting and are not too close to the screen.")		#display tray notification
         else :
             self.squintCounter = 0								#reset the eye frame squint Counter
             
@@ -46,8 +47,7 @@ class EyeMovement:
     def getTotal(self):
         return self.total                                       #return the total number of blinks
 
-    def __init__(self, notifier):
-        self.notifier = notifier					            #initialize the notifier
+    def __init__(self):
         self.eyeArea = Eyes()					                #initialize the eye area class
         self.blink1 = np.datetime64('now')                      #initializes blink1
         self.blink2 = np.datetime64('now')                      #initializes blink2

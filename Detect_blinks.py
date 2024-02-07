@@ -1,9 +1,9 @@
 from imutils.video import FileVideoStream, VideoStream
 from ScreenBrightness import BrightnessControl
-from schedule import repeat, every
 from DistanceCalc import DistanceCalculator
 from EyeMovements import EyeMovement
-from win10toast import ToastNotifier
+from schedule import repeat, every
+from plyer import notification
 from imutils import face_utils
 from Posture import Postures
 from Config import config
@@ -17,29 +17,28 @@ import time
 import dlib
 import cv2
 
-@repeat(every(25).minutes)										#repeat the function every 25 minutes
+#@repeat(every(25).minutes)										#repeat the function every 25 minutes
 def takeBreak():
-    notifier.show_toast("Take A Break", "You have been working for 20 minutes. Take a break to rest your eyes.", duration=5, threaded=True)   #remind the user to take a break
+    notification.notify("Take A Break", "You have been working for 20 minutes. Take a break to rest your eyes.")   #remind the user to take a break
 
-notifier = ToastNotifier()								        #initialize the notifier
-distanceCalc = DistanceCalculator(notifier)				        #initialize the distance calculator class
-brightnessControl = BrightnessControl(notifier)					#initialize the brightness control class
-posture = Postures(notifier)									#initialize the posture class
+distanceCalc = DistanceCalculator()				        #initialize the distance calculator class
+brightnessControl = BrightnessControl()					#initialize the brightness control class
+posture = Postures()									#initialize the posture class
 
 detector = dlib.get_frontal_face_detector() 											#initialize dlib's face detector
 predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.dat")		#initialize dlib's facial landmark predictor
-#predictor = dlib.shape_predictor("Resources/predictor.dat")		#initialize dlib's facial landmark predictor
+#predictor = dlib.shape_predictor("Resources/predictor.dat")		                    #initialize dlib's facial landmark predictor
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]							#grab the indexes of the facial landmarks for the left eye
 (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
 
-config = GUI(detector, predictor, notifier)												#configure the application to the user's face
-vs = VideoStream(src=0).start()															#start the video stream thread
-eyeMovement = EyeMovement(notifier)														#initialize the eye movement class
-reminder = schedule.every(2).seconds.do(takeBreak)                                            #schedule a break every 20 minutes  
+config = GUI(detector, predictor)												            #configure the application to the user's face
+vs = VideoStream(src=0).start()															    #start the video stream thread
+eyeMovement = EyeMovement()														            #initialize the eye movement class
+reminder = schedule.every(2).seconds.do(takeBreak)                                          #schedule a break every 20 minutes  
 while True:
-    if not vs.stream.isOpened():																#check if the video stream was opened correctly
-        notifier.show_toast("Cannot open camera", "Ensure your camera is connected.", duration=5, threaded=True)		#display tray notification
-        exit()																			#exit the program	
+    if not vs.stream.isOpened():															#check if the video stream was opened correctly
+        notification.notify("Cannot open camera", "Ensure your camera is connected.")		#display tray notification
+        exit()																			    #exit the program	
         
       
     frame = vs.read()																	#read the frame from the threaded video stream
@@ -55,7 +54,7 @@ while True:
     faces = detector(gray, 0)									#detect faces in the grayscale frame
     
     if not faces:												#check if a face was detected
-        notifier.show_toast("No Face Detected", "Ensure your face is in the frame.", duration=5, threaded=True)		#display tray notification
+        notification.notify("No Face Detected", "Ensure your face is in the frame.")		#display tray notification
     else:
         for face in faces:
             shape = predictor(gray, face)							#determine the facial landmarks for the face region, then convert the facial landmark (x, y)-coordinates to a NumPy array
@@ -88,3 +87,4 @@ while True:
 schedule.cancel_job(reminder)						#cancel the break reminder
 cv2.destroyAllWindows()								#close all windows
 vs.stop()		                                    #stop the video stream
+exit()																			    #exit the program

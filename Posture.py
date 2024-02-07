@@ -1,3 +1,4 @@
+from plyer import notification
 import mediapipe as mp
 import math
 import cv2
@@ -16,7 +17,7 @@ class Postures:
     left_elbow = self.imagePoints.landmark[self.keyPoints.LEFT_ELBOW]
     right_elbow = self.imagePoints.landmark[self.keyPoints.RIGHT_ELBOW]
     if left_elbow and self.checkOnScreen(left_elbow) and right_elbow and self.checkOnScreen(right_elbow):
-      self.notifier.show_toast("Stretching Detected", "If you're tired or uncomfortable, consider taking break.", duration=5, threaded=True)		#display tray notification
+      notification.notify("Stretching Detected", "If you're tired or uncomfortable, consider taking break.")		#display tray notification
   
   def landmarkCoordinates(self):
     self.leftShldr_x = int(self.imagePoints.landmark[self.keyPoints.LEFT_SHOULDER].x * self.width)      #get the x coordinates for the left shoulder
@@ -69,7 +70,7 @@ class Postures:
         lineColor = (0, 0, 255)                                                              #set the line color to red if the user has bad posture
         self.badFrames += 1                                                                  #increment the bad posture frames counter
         if self.badFrames >= 15:
-          self.notifier.show_toast("Bad Posture Detected", "Ensure you are sitting up straight.", duration=5, threaded=True)		#display tray notification
+          notification.notify("Bad Posture Detected", "Ensure you are sitting up straight.")		#display tray notification
           self.badFrames = 0                                                                                   #reset the bad posture frames counter    
         
       cv2.putText(frame, status, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, lineColor, 2)                                     #display the status of the user's posture
@@ -82,8 +83,7 @@ class Postures:
       cv2.putText(frame, 'Neck : ' + str(int(neckAngle)) + '  Torso : ' + str(int(torsoAngle)), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)        #display neck and torse angles
     cv2.imshow('Posture', frame)          #show the frame
  
-  def __init__(self, notifier):
-    self.notifier = notifier                                                                            #initialize the notifier
+  def __init__(self):
     self.pose = mp.solutions.pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)       #initialize the pose class with the confidence values
     self.keyPoints = mp.solutions.pose.PoseLandmark                                                     #initialize the pose landmarks 
     self.badFrames = 0                                                                                  #initialize the bad posture frames counter
