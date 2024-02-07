@@ -20,11 +20,16 @@ class BrightnessControl:
     def update(self, frame):
         brightness = self.calculateBrightness(frame) * 200                                  #calculate the brightness of the frame
         if brightness > 150:                                                                #check if the brightness is greater than 150
-            notification.notify("Screen Glare", "Adjust your screen to reduce glare.")      #display tray notification
+            self.badFrames += 1                                                             #increment the bad frames counter
+            if self.badFrames > 20:                                                         #check if the bad frames counter is greater than 20
+                notification.notify("Screen Glare", "Adjust your screen to reduce glare.")  #display tray notification
+        else:                                                                               #if the brightness is less than 150
+            self.badFrames = 0                                                              #reset the bad frames counter
         self.setBrightness(brightness)                                                      #call the set brightness function
         
     def __init__(self):
         self.brightness_offset = 10                    #adjust to offset the brightness up/down. 
         self.cameraIndex = 0                           #select camera
         self.exposureValue = 15                        #use in with brightness_offset. A lower number means lower brightness.
+        self.badFrames = 0                             #initialize the bad frames counter
         self.cameraExposure()
