@@ -13,11 +13,18 @@ class DistanceCalculator:
         
         distance_cm = a*eyeDistance**2+b*eyeDistance+c-18                      #calculate the distance in cm
         if distance_cm < 55:                                                                                                        #for safe use, distance to screen should be grater than 51 cm
-            notification.notify("Too Close To Screen", f'{int(distance_cm)} cm - Not Safe')		#display tray notification
+            self.badFrames += 1                                                                                                     #increment the bad frames counter
+            if self.badFrames > 20:                                                                                                 #check if the bad frames counter is greater than 10
+                notification.notify("Too Close To Screen", f'{int(distance_cm)} cm - Not Safe')		#display tray notification
         elif distance_cm > 70:                                                                                                      #check if the distance is greater than 65 cm
-            notification.notify("Too Far From Screen", f'{int(distance_cm)} cm - Not Safe')		#display tray notification            
+            self.badFrames += 1                                                                                                     #increment the bad frames counter
+            if self.badFrames > 20:
+                notification.notify("Too Far From Screen", f'{int(distance_cm)} cm - Not Safe')		#display tray notification            
+        else:
+            self.badFrames = 0                                                                                                      #reset the bad frames counter
     
     def __init__(self):
         distance_df = pd.read_csv('distance_xy.csv')            #read the csv data
         self.distance_pixel = distance_df['distance_pixel']     #read the distance data
         self.distance_cm = distance_df['distance_cm']           #read the distance data
+        self.badFrames = 0                                      #initialize the bad frames counter

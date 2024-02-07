@@ -18,6 +18,7 @@ import dlib
 import cv2
 
 #@repeat(every(25).minutes)										#repeat the function every 25 minutes
+@repeat(every(2).seconds)										#repeat the function every 20 seconds
 def takeBreak():
     notification.notify("Take A Break", "You have been working for 20 minutes. Take a break to rest your eyes.")   #remind the user to take a break
 
@@ -34,7 +35,6 @@ predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.da
 config = GUI(detector, predictor)												            #configure the application to the user's face
 vs = VideoStream(src=0).start()															    #start the video stream thread
 eyeMovement = EyeMovement()														            #initialize the eye movement class
-reminder = schedule.every(2).seconds.do(takeBreak)                                          #schedule a break every 20 minutes  
 while True:
     if not vs.stream.isOpened():															#check if the video stream was opened correctly
         notification.notify("Cannot open camera", "Ensure your camera is connected.")		#display tray notification
@@ -81,10 +81,9 @@ while True:
         dist.join()											#join the distance calculator thread
         pose.join()											#join the posture check thread
         
-        if cv2.waitKey(30) & 0xFF ==ord('q'):				#press q to quit
+        if cv2.waitKey(30) & 0xFF ==ord('q'):				#hold q to quit
             break
 
-schedule.cancel_job(reminder)						#cancel the break reminder
 cv2.destroyAllWindows()								#close all windows
 vs.stop()		                                    #stop the video stream
-exit()																			    #exit the program
+exit()												#exit the program
