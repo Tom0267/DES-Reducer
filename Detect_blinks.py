@@ -3,9 +3,9 @@ from ScreenBrightness import BrightnessControl
 from DistanceCalc import DistanceCalculator
 from EyeMovements import EyeMovement
 from schedule import repeat, every
-from plyer import notification
 from imutils import face_utils
 from Posture import Postures
+from notifier import notif
 from Config import config
 from time import time
 from GUI import GUI
@@ -13,18 +13,14 @@ import numpy as np
 import threading
 import schedule
 import imutils
-import time
+import timeq
 import dlib
 import cv2
 
-#@repeat(every(25).minutes)										#repeat the function every 25 minutes
-@repeat(every(2).seconds)										#repeat the function every 20 seconds
-def takeBreak():
-    notification.notify("Take A Break", "You have been working for 20 minutes. Take a break to rest your eyes.")   #remind the user to take a break
-
-distanceCalc = DistanceCalculator()				        #initialize the distance calculator class
-brightnessControl = BrightnessControl()					#initialize the brightness control class
-posture = Postures()									#initialize the posture class
+#@repeat(every(2).seconds)										#repeat the function every 2 seconds to test
+@repeat(every(25).minutes)										#repeat the function every 25 minutes
+def takeBreak() -> None:
+    notifier.notify("Take A Break", "You have been working for 20 minutes. Take a break to rest your eyes.", "critical")   #remind the user to take a break
 
 detector = dlib.get_frontal_face_detector() 											#initialize dlib's face detector
 predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.dat")		#initialize dlib's facial landmark predictor
@@ -32,13 +28,18 @@ predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.da
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]							#grab the indexes of the facial landmarks for the left eye
 (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
 
-config = GUI(detector, predictor)												            #configure the application to the user's face
-vs = VideoStream(src=0).start()															    #start the video stream thread
-eyeMovement = EyeMovement()														            #initialize the eye movement class
+notifier = notif()                                              #initialize the notifier class
+distanceCalc = DistanceCalculator(notifier)				        #initialize the distance calculator class
+brightnessControl = BrightnessControl(notifier)					#initialize the brightness control class
+posture = Postures(notifier)									#initialize the posture class
+eyeMovement = EyeMovement(notifier)								#initialize the eye movement class
+
+config = GUI(detector, predictor, notifier)												            #configure the application to the user's face
+vs = VideoStream(src=0).start()															            #start the video stream thread
 while True:
-    if not vs.stream.isOpened():															#check if the video stream was opened correctly
-        notification.notify("Cannot open camera", "Ensure your camera is connected.")		#display tray notification
-        exit()																			    #exit the program	
+    if not vs.stream.isOpened():															        #check if the video stream was opened correctly
+        notifier.notify("Cannot open camera", "Ensure your camera is connected.", "critical")		#display tray notification
+        exit()																			            #exit the program	
         
       
     frame = vs.read()																	#read the frame from the threaded video stream
@@ -54,7 +55,7 @@ while True:
     faces = detector(gray, 0)									#detect faces in the grayscale frame
     
     if not faces:												#check if a face was detected
-        notification.notify("No Face Detected", "Ensure your face is in the frame.")		#display tray notification
+        notifier.notify("No Face Detected", "Ensure your face is in the frame.", "critical")		#display tray notification
     else:
         for face in faces:
             shape = predictor(gray, face)							#determine the facial landmarks for the face region, then convert the facial landmark (x, y)-coordinates to a NumPy array

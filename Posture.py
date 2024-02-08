@@ -1,25 +1,24 @@
-from plyer import notification
 import mediapipe as mp
 import math
 import cv2
 
 class Postures:
-  def findAngle(self, x1, y1, x2, y2):
+  def findAngle(self, x1, y1, x2, y2) -> int:
     theta = math.acos((y2 -y1)*(-y1) / (math.sqrt((x2 - x1)**2 + (y2 - y1)**2) * y1))                 #calculate the angle between the two points
     degree = int(180/math.pi)*theta                                                                   #convert the angle to degrees
     return degree
   
-  def checkOnScreen(self, landmark):
+  def checkOnScreen(self, landmark) -> bool:
     x, y = int(landmark.x * self.width), int(landmark.y * self.height)
     return 0 <= x < self.width and 0 <= y < self.height
   
-  def checkElbows(self):
+  def checkElbows(self) -> None:
     left_elbow = self.imagePoints.landmark[self.keyPoints.LEFT_ELBOW]
     right_elbow = self.imagePoints.landmark[self.keyPoints.RIGHT_ELBOW]
     if left_elbow and self.checkOnScreen(left_elbow) and right_elbow and self.checkOnScreen(right_elbow):
-      notification.notify("Stretching Detected", "If you're tired or uncomfortable, consider taking break.")		#display tray notification
+      self.notifier.notify("Stretching Detected", "If you're tired or uncomfortable, consider taking break.", "normal")		#display tray notification
   
-  def landmarkCoordinates(self):
+  def landmarkCoordinates(self) -> None:
     self.leftShldr_x = int(self.imagePoints.landmark[self.keyPoints.LEFT_SHOULDER].x * self.width)      #get the x coordinates for the left shoulder
     self.leftShldr_y = int(self.imagePoints.landmark[self.keyPoints.LEFT_SHOULDER].y * self.height)     #get the y coordinates for the left shoulder
     
@@ -41,7 +40,7 @@ class Postures:
     self.rightElbow_x = int(self.imagePoints.landmark[self.keyPoints.RIGHT_ELBOW].x * self.width)    #get the x coordinates for the right elbow
     self.rightElbow_y = int(self.imagePoints.landmark[self.keyPoints.RIGHT_ELBOW].y * self.height)   #get the y coordinates for the right elbow
   
-  def checkPosture(self, frame):
+  def checkPosture(self, frame) -> None:
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)                                                #convert the frame from BGR to RGB    
     self.results = self.pose.process(frame)                                                       #get the landmarks from the frame
     self.imagePoints = self.results.pose_landmarks                                                #get the landmarks from the frame    
@@ -70,7 +69,7 @@ class Postures:
         lineColor = (0, 0, 255)                                                              #set the line color to red if the user has bad posture
         self.badFrames += 1                                                                  #increment the bad posture frames counter
         if self.badFrames >= 15:
-          notification.notify("Bad Posture Detected", "Ensure you are sitting up straight.")		#display tray notification
+          self.notifier.notify("Bad Posture Detected", "Ensure you are sitting up straight.", "normal")		       #display tray notification 
           self.badFrames = 0                                                                                   #reset the bad posture frames counter    
         
       cv2.putText(frame, status, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, lineColor, 2)                                     #display the status of the user's posture
@@ -83,7 +82,8 @@ class Postures:
       cv2.putText(frame, 'Neck : ' + str(int(neckAngle)) + '  Torso : ' + str(int(torsoAngle)), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)        #display neck and torse angles
     cv2.imshow('Posture', frame)          #show the frame
  
-  def __init__(self):
+  def __init__(self, notifier) -> None:
+    self.notifier = notifier                                                                            #initialize the notifier class
     self.pose = mp.solutions.pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)       #initialize the pose class with the confidence values
     self.keyPoints = mp.solutions.pose.PoseLandmark                                                     #initialize the pose landmarks 
     self.badFrames = 0                                                                                  #initialize the bad posture frames counter

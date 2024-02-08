@@ -1,7 +1,6 @@
 from imutils.video import FileVideoStream, VideoStream
 from EyeMovements import EyeMovement
 from imutils import face_utils
-from plyer import notification
 from EyeArea import Eyes
 import pandas as pd
 import numpy as np
@@ -12,7 +11,8 @@ import cv2
 import csv
 
 class config:
-    def __init__(self, detector, predictor, vs):
+    def __init__(self, detector, predictor, vs, notifier):
+        self.notifier = notifier
         self.blinked = False
         self.relaxed = False
         self.vs = vs
@@ -27,7 +27,7 @@ class config:
         self.searchString = []
         self.dataframe = pd.DataFrame(columns = ['Labels','Values'])        #creates dataframe
 
-    def checkDataFrame(self, func):
+    def checkDataFrame(self, func) -> None:
         if func == 'Relax':
             self.searchString = ['EE', 'LEM', 'REM', 'EAR']                             #defines search values for relax function
         else:
@@ -35,19 +35,19 @@ class config:
         for label in self.searchString:                                                 #searches for values in dataframe
             self.dataframe.drop(self.dataframe.index[self.dataframe['Labels'] == label], inplace = True)   #drops values from dataframe
         
-    def saveDataFrame(self):
+    def saveDataFrame(self) -> None:
         self.clearFile()                                                                    #clears contents of csv
         temp = self.dataframe.copy()                                                        #creates copy of dataframe
         self.dataframe.to_csv('Resources/configData.csv', index = False, header = True)     #save the dataframe to the csv file
         self.dataframe = temp.copy()                                                        #reverts dataframe to original state
         
-    def clearFile(self):           
+    def clearFile(self) -> None:           
         self.f = open('Resources/configData.csv', 'w')		                #open the csv file
         self.writer = csv.writer(self.f)                                    #create the csv writer
         self.f.truncate(0)                               #clears contents of csv
         self.f.close
     
-    def calculateDistance(self, leftEye, rightEye, mouth):
+    def calculateDistance(self, leftEye, rightEye, mouth) -> None:
         leftEyeCenter = leftEye.mean(axis=0).astype("int")				    #compute the center of mass for each eye
         rightEyeCenter = rightEye.mean(axis=0).astype("int")                #compute the center of mass for each eye
         mouthCenter = mouth.mean(axis=0).astype("int")                      #compute the center of mass for the mouth
@@ -55,7 +55,7 @@ class config:
         self.LEMDistances.append(np.linalg.norm(leftEyeCenter - mouthCenter))			#compute the euclidean distance between the center of the left eye and the mouth
         self.REMDistances.append(np.linalg.norm(rightEyeCenter - mouthCenter))			#compute the euclidean distance between the center of the right eye and the mouth
         
-    def averages(self, func):
+    def averages(self, func) -> None:
         if func == 'Relax':
             self.EEDistance = np.mean(self.EEdistances)							#compute the average distance between the eyes
             self.LEMDistance = np.mean(self.LEMDistances)						#compute the average distance between the left eye and the mouth
@@ -68,17 +68,17 @@ class config:
             self.LEMDistance = np.mean(self.LEMDistances)						#compute the average distance between the left eye and the mouth
             self.REMDistance = np.mean(self.REMDistances)						#compute the average distance between the right eye and the mouth
 
-    def calculateEAR(self, leftEye, rightEye):
+    def calculateEAR(self, leftEye, rightEye) -> None:
         leftEAR = self.eyeArea.eyeAspectRatio(leftEye)				#left eye aspect ratio
         rightEAR = self.eyeArea.eyeAspectRatio(rightEye)			    #right eye aspect ratio
         self.ear.append((leftEAR + rightEAR) / 2.0)				        #append the average the eye aspect ratio together for both eyes
     
-    def checkCamera(self, vs):
+    def checkCamera(self, vs) -> None:
         if not vs.stream.isOpened():																#check if the video stream was opened correctly
-            notification.notify("Cannot open camera", "Ensure your camera is connected.")		#display tray notification
+            self.notifier.notify("Cannot open camera", "Ensure your camera is connected.", "normal")		#display tray notification
             exit()
             
-    def configureRelax(self):
+    def configureRelax(self) -> None:
         self.checkCamera(self.vs)
         (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]							#grab the indexes of the facial landmarks for the left eye
         (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
@@ -90,7 +90,7 @@ class config:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = self.detector(gray, 0)									#detect faces in the grayscale frame
             if not faces:												#check if a face was detected
-                notification.notify("No Face Detected", "Ensure your face is in the frame.", duration=2, threaded=True)		#display tray notification
+                self.notifier.notify("No Face Detected", "Ensure your face is in the frame.", "normal")		#display tray notification
             else:
                 for face in faces:
                     shape = self.predictor(gray, face)							#determine the facial landmarks for the face region, then convert the facial landmark (x, y)-coordinates to a NumPy array
@@ -108,13 +108,13 @@ class config:
                         self.dataframe = pd.concat([self.dataframe, pd.DataFrame({'Labels': ['LEM'], 'Values': [self.LEMDistance]})]) #write the average distance between the left eye and the mouth to the dataframe
                         self.dataframe = pd.concat([self.dataframe, pd.DataFrame({'Labels': ['REM'], 'Values': [self.REMDistance]})]) #write the average distance between the right eye and the mouth to the dataframe
                         self.dataframe = pd.concat([self.dataframe, pd.DataFrame({'Labels': ['EAR'], 'Values': [self.EAR]})]) #write the average eye aspect ratio to the dataframe
-                        notification.notify("Relaxed Configuration Complete","Well Done!")		#display tray notification
+                        self.notifier.notify("Relaxed Configuration Complete","Well Done!", "normal")		#display tray notification
                         self.relaxed = True
                         self.loop = False 
         if self.blinked == True and self.relaxed == True:
             self.saveDataFrame()
                         
-    def configureBlinks(self):
+    def configureBlinks(self) -> None:
         self.checkCamera(self.vs)
         (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]							#grab the indexes of the facial landmarks for the left eye
         (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
@@ -125,7 +125,7 @@ class config:
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = self.detector(gray, 0)									#detect faces in the grayscale frame
             if not faces:												#check if a face was detected
-                notification.notify("No Face Detected", "Ensure your face is in the frame.")		#display tray notification
+                self.notifier.notify("No Face Detected", "Ensure your face is in the frame.", "normal")		#display tray notification
             else:
                 for face in faces:
                     shape = self.predictor(gray, face)							#determine the facial landmarks for the face region, then convert the facial landmark (x, y)-coordinates to a NumPy array
@@ -138,7 +138,7 @@ class config:
                         self.averages('Blinks')
                         self.checkDataFrame('Blinks')
                         self.dataframe = pd.concat([self.dataframe, pd.DataFrame({'Labels': ['CEAR'], 'Values': [self.CEAR]})]) #write the average eye aspect ratio to the csv file
-                        notification.notify("Blink Configuration Complete","Well Done!")		#display tray notification
+                        self.notifier.notify("Blink Configuration Complete", "Well Done!", "normal")		#display tray notification
                         self.blinked = True
                         self.loop = False 
         if self.blinked == True and self.relaxed == True:

@@ -1,9 +1,8 @@
-from plyer import notification
 import pandas as pd
 import numpy as np
 import cv2
 class DistanceCalculator:
-    def checkDist(self, leftEye, rightEye):
+    def checkDist(self, leftEye, rightEye) -> None:
         coff = np.polyfit(self.distance_pixel, self.distance_cm, 2)         #get corrlation coffs
         a, b, c = coff                                                      #unpack the coffs
                   
@@ -15,15 +14,16 @@ class DistanceCalculator:
         if distance_cm < 55:                                                                                                        #for safe use, distance to screen should be grater than 51 cm
             self.badFrames += 1                                                                                                     #increment the bad frames counter
             if self.badFrames > 20:                                                                                                 #check if the bad frames counter is greater than 10
-                notification.notify("Too Close To Screen", f'{int(distance_cm)} cm - Not Safe')		#display tray notification
+                self.notifier.notify("Too Close To Screen", f'{int(distance_cm)} cm - Not Safe', "normal")		                                #display tray notification
         elif distance_cm > 70:                                                                                                      #check if the distance is greater than 65 cm
             self.badFrames += 1                                                                                                     #increment the bad frames counter
             if self.badFrames > 20:
-                notification.notify("Too Far From Screen", f'{int(distance_cm)} cm - Not Safe')		#display tray notification            
+                self.notifier.notify("Too Far From Screen", f'{int(distance_cm)} cm - Not Safe', "normal")		                                #display tray notification            
         else:
             self.badFrames = 0                                                                                                      #reset the bad frames counter
     
-    def __init__(self):
+    def __init__(self, notifier) -> None:
+        self.notifier = notifier                                #initialize the notifier class
         distance_df = pd.read_csv('distance_xy.csv')            #read the csv data
         self.distance_pixel = distance_df['distance_pixel']     #read the distance data
         self.distance_cm = distance_df['distance_cm']           #read the distance data

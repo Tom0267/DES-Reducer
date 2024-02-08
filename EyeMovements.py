@@ -1,6 +1,5 @@
 from imutils.video import FileVideoStream, VideoStream
 from imutils import face_utils
-from plyer import notification
 from EyeArea import Eyes
 import pandas as pd
 import numpy as np
@@ -10,7 +9,7 @@ import dlib
 import cv2
 import csv
 class EyeMovement:
-    def checkMovement(self,leftEye,rightEye):
+    def checkMovement(self,leftEye,rightEye) -> None:
         self.leftEAR = self.eyeArea.eyeAspectRatio(leftEye)				#left eye aspect ratio
         self.rightEAR = self.eyeArea.eyeAspectRatio(rightEye)			#right eye aspect ratio
         self.ear = (self.leftEAR + self.rightEAR) / 2.0				    #average the eye aspect ratio together for both eyes
@@ -24,9 +23,9 @@ class EyeMovement:
                 self.total += 1
                 self.blink2 = np.datetime64('now')					    #record the time of the blink
                 if self.blink2 - self.blink1 >  8:						#check if the time between blinks is greater than 8 seconds
-                    notification.notify("Don't Forget To Blink", "For healthy eyes, you should be blinking every 5 seconds.")
+                    self.notifier.notify("Don't Forget To Blink", "For healthy eyes, you should be blinking every 5 seconds.", "low")
                 elif self.blink2 - self.blink1 < 2:						#check if the time between blinks is less than 2
-                    notification.notify("Rapid Blinking", "Take a break from the screen to ensure your eyes stay healythy.")
+                    self.notifier.notify("Rapid Blinking", "Take a break from the screen to ensure your eyes stay healythy.", "low")
         else :
             self.blinkCounter = 0								                #reset the eye frame blink Counter
             self.blink1 = self.blink2
@@ -34,20 +33,21 @@ class EyeMovement:
         if self.ear <= self.squintThresh:										#check is eye aspect ratio is below the squint threshold
             self.squintCounter += 1										        #increment the squint Counter
             if self.squintCounter >= self.squintConsecFrames:					#if the eyes were closed for a sufficient number of frames increment the total number of squints
-                notification.notify("Squinting Detected", "Ensure you have proper lighting and are not too close to the screen.")		#display tray notification
+                self.notifier.notify("Squinting Detected", "Ensure you have proper lighting and are not too close to the screen.", "low")		#display tray notification
         else :
             self.squintCounter = 0								#reset the eye frame squint Counter
             
-    def getHull(self):
+    def getHull(self) -> tuple:
         return self.leftEyeHull, self.rightEyeHull              #return the hulls
 
-    def getEAR(self):
+    def getEAR(self) -> float:
         return self.ear                                         #return the eye aspect ratio
     
-    def getTotal(self):
+    def getTotal(self) -> int:
         return self.total                                       #return the total number of blinks
 
-    def __init__(self):
+    def __init__(self, notifier) -> None:
+        self.notifier = notifier                                #initialize the notifier class
         self.eyeArea = Eyes()					                #initialize the eye area class
         self.blink1 = np.datetime64('now')                      #initializes blink1
         self.blink2 = np.datetime64('now')                      #initializes blink2

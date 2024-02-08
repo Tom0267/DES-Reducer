@@ -51,10 +51,9 @@ class GUI(customtkinter.CTk):
         self.Description.configure(state = "disabled")                                                                                        #disable editing textbox                      
         self.ConfigureButton.configure(command = self.config.configureRelax)                                                                  #change the command of the configure button to configure relax
     
-    def __init__(self, detector, predictor):
+    def __init__(self, detector, predictor, notifier) -> None:
         self.vs = VideoStream(src=0).start()                                        #start the video stream thread
-        self.config = config(detector, predictor, self.vs)                #initialize the config class
-        
+        self.config = config(detector, predictor, self.vs, notifier)                #initialize the config class
         self.app = customtkinter.CTk()                                              #initialize the customTKinter class                  
         self.app.protocol("WM_DELETE_WINDOW", self.onClose)                         #set the protocol for closing the GUI
         customtkinter.set_appearance_mode('system')                                 #set the appearance mode to system   
