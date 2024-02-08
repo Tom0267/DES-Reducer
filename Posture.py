@@ -9,14 +9,16 @@ class Postures:
     return degree
   
   def checkOnScreen(self, landmark) -> bool:
-    x, y = int(landmark.x * self.width), int(landmark.y * self.height)
-    return 0 <= x < self.width and 0 <= y < self.height
+    x, y = int(landmark.x * self.width), int(landmark.y * self.height)                                #gets the x and y values of the landmark in relation to the screen
+    return 0 <= x < self.width and 0 <= y < self.height                                               #returs true or false if the landmark is on the screen
   
   def checkElbows(self) -> None:
-    left_elbow = self.imagePoints.landmark[self.keyPoints.LEFT_ELBOW]
-    right_elbow = self.imagePoints.landmark[self.keyPoints.RIGHT_ELBOW]
-    if left_elbow and self.checkOnScreen(left_elbow) and right_elbow and self.checkOnScreen(right_elbow):
-      self.notifier.notify("Stretching Detected", "If you're tired or uncomfortable, consider taking break.", "normal")		#display tray notification
+    left_elbow = self.imagePoints.landmark[self.keyPoints.LEFT_ELBOW]                                         #get the left elbow landmark
+    right_elbow = self.imagePoints.landmark[self.keyPoints.RIGHT_ELBOW]                                       #get the right elbow landmark
+    if left_elbow and self.checkOnScreen(left_elbow) and right_elbow and self.checkOnScreen(right_elbow):     #check if the elbows are on the screen
+      self.elbowCounter += 1                                                                                  #increment the elbow counter
+      if self.elbowCounter >= 3 and self.elbowCounter < 5:                                                    #checks if the elbow has been on screen for 3 frames
+        self.notifier.notify("Stretching Detected", "If you're tired or uncomfortable, consider taking break.", "normal")		#display tray notification
   
   def landmarkCoordinates(self) -> None:
     self.leftShldr_x = int(self.imagePoints.landmark[self.keyPoints.LEFT_SHOULDER].x * self.width)      #get the x coordinates for the left shoulder
@@ -64,13 +66,13 @@ class Postures:
       if neckAngle > 26 and neckAngle < 29 and torsoAngle > 136 and torsoAngle < 139:               #check if the user has good posture (angles determined experimentally)
         status = 'Good Posture'                                                                     #set the status to good posture   
         lineColor = (0, 255, 0)                                                                     #set the line color to green if the user has good posture  
+        self.badFrames = 0                                                                          #reset the bad posture frames counter 
       else:
         status = 'Bad Posture'                                                               #set the status to bad posture 
         lineColor = (0, 0, 255)                                                              #set the line color to red if the user has bad posture
         self.badFrames += 1                                                                  #increment the bad posture frames counter
-        if self.badFrames >= 15:
-          self.notifier.notify("Bad Posture Detected", "Ensure you are sitting up straight.", "normal")		       #display tray notification 
-          self.badFrames = 0                                                                                   #reset the bad posture frames counter    
+        if self.badFrames >= 15 and self.badFrames < 17:
+          self.notifier.notify("Bad Posture Detected", "Ensure you are sitting up straight.", "normal")		       #display tray notification    
         
       cv2.putText(frame, status, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, lineColor, 2)                                     #display the status of the user's posture
       cv2.line(frame, (self.leftShldr_x, self.leftShldr_y), (self.leftEar_x, self.leftEar_y), lineColor, 4)                 #draw the lines between the landmarks
@@ -87,5 +89,6 @@ class Postures:
     self.pose = mp.solutions.pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)       #initialize the pose class with the confidence values
     self.keyPoints = mp.solutions.pose.PoseLandmark                                                     #initialize the pose landmarks 
     self.badFrames = 0                                                                                  #initialize the bad posture frames counter
+    self.elbowCounter = 0                                                                               #initialize the elbow counter
     self.height = 337                                                                                   #initialize the height of the frame
     self.width = 450                                                                                    #initialize the width of the frame

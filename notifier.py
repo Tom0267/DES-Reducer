@@ -11,5 +11,4 @@ class notif:
     def __init__(self) -> None:
         self.notification = Notify(default_application_name="Eye Health", default_notification_limit=1)
         self.notification.title = "Eye Health"
-        
         #self.notification.icon = "path/to/icon"            #TODO: add icon

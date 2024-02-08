@@ -11,7 +11,7 @@ import cv2
 import csv
 
 class config:
-    def __init__(self, detector, predictor, vs, notifier):
+    def __init__(self, detector, predictor, vs, notifier) -> None:
         self.notifier = notifier
         self.blinked = False
         self.relaxed = False
@@ -62,14 +62,14 @@ class config:
             self.REMDistance = np.mean(self.REMDistances)						#compute the average distance between the right eye and the mouth
             self.EAR = np.mean(self.ear)										#compute the average eye aspect ratio
         elif func == 'Blinks':
-            self.CEAR = np.mean(self.ear)                                        #compute the average closed eye aspect ratio
+            self.CEAR = np.mean(self.ear)                                       #compute the average closed eye aspect ratio
         elif func == 'Distance':
             self.EEDistance = np.mean(self.EEdistances)							#compute the average distance between the eyes
             self.LEMDistance = np.mean(self.LEMDistances)						#compute the average distance between the left eye and the mouth
             self.REMDistance = np.mean(self.REMDistances)						#compute the average distance between the right eye and the mouth
 
     def calculateEAR(self, leftEye, rightEye) -> None:
-        leftEAR = self.eyeArea.eyeAspectRatio(leftEye)				#left eye aspect ratio
+        leftEAR = self.eyeArea.eyeAspectRatio(leftEye)				    #left eye aspect ratio
         rightEAR = self.eyeArea.eyeAspectRatio(rightEye)			    #right eye aspect ratio
         self.ear.append((leftEAR + rightEAR) / 2.0)				        #append the average the eye aspect ratio together for both eyes
     

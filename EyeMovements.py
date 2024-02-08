@@ -32,7 +32,7 @@ class EyeMovement:
             
         if self.ear <= self.squintThresh:										#check is eye aspect ratio is below the squint threshold
             self.squintCounter += 1										        #increment the squint Counter
-            if self.squintCounter >= self.squintConsecFrames:					#if the eyes were closed for a sufficient number of frames increment the total number of squints
+            if self.squintCounter >= self.squintConsecFrames and self.squintCounter < self.squintConsecFrames +2:   #if the eyes were closed for a sufficient number of frames
                 self.notifier.notify("Squinting Detected", "Ensure you have proper lighting and are not too close to the screen.", "low")		#display tray notification
         else :
             self.squintCounter = 0								#reset the eye frame squint Counter
