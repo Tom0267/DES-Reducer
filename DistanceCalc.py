@@ -10,7 +10,7 @@ class DistanceCalculator:
         rightEyeCenter = rightEye.mean(axis=0)                #compute the center of mass for each eye
         eyeDistance = np.linalg.norm(leftEyeCenter - rightEyeCenter)        #compute the euclidean distance between the eye centers
         
-        distance_cm = a*eyeDistance**2+b*eyeDistance+c-18                      #calculate the distance in cm
+        distance_cm = a*eyeDistance**2+b*eyeDistance+c-15                      #calculate the distance in cm
         if distance_cm < 55:                                                                                                        #for safe use, distance to screen should be grater than 51 cm
             self.badFrames += 1                                                                                                     #increment the bad frames counter
             if self.badFrames > 20 and self.badFrames <22:                                                                          #check if the bad frames counter is greater than 20

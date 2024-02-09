@@ -20,7 +20,7 @@ class BrightnessControl:
         brightness = self.calculateBrightness(frame) * 200                                              #calculate the brightness of the frame
         if brightness > 150:                                                                            #check if the brightness is greater than 150
             self.badFrames += 1                                                                         #increment the bad frames counter
-            if self.badFrames > 20:                                                                     #check if the bad frames counter is greater than 20
+            if self.badFrames > 20 and self.badFrames < 22:                                             #check if the bad frames counter is greater than 20 and less than 22
                 self.notifier.notify("Screen Glare", "Adjust your screen to reduce glare.", "critical")  #display tray notification
         else:                                                                                           #if the brightness is less than 150
             self.badFrames = 0                                                                          #reset the bad frames counter

@@ -19,7 +19,7 @@ class EyeMovement:
 
         if self.ear <= self.blinkThresh:										#check is eye aspect ratio is below the blink threshold
             self.blinkCounter += 1										        #increment the blink Counter
-            if self.blinkCounter >= self.blinkConsecFrames and not self.blinkCounter > 3:			#if the eyes were closed for a sufficient number of frames increment the total number of blinks
+            if self.blinkCounter >= self.blinkConsecFrames and self.blinkCounter < 3:			#if the eyes were closed for a sufficient number of frames increment the total number of blinks
                 self.total += 1
                 self.blink2 = np.datetime64('now')					    #record the time of the blink
                 if self.blink2 - self.blink1 >  8:						#check if the time between blinks is greater than 8 seconds
@@ -30,7 +30,7 @@ class EyeMovement:
             self.blinkCounter = 0								                #reset the eye frame blink Counter
             self.blink1 = self.blink2
             
-        if self.ear <= self.squintThresh:										#check is eye aspect ratio is below the squint threshold
+        if self.ear <= self.squintThresh and self.ear > self.blinkThresh:		#check is eye aspect ratio is below the squint threshold and above the blink threshold
             self.squintCounter += 1										        #increment the squint Counter
             if self.squintCounter >= self.squintConsecFrames and self.squintCounter < self.squintConsecFrames +2:   #if the eyes were closed for a sufficient number of frames
                 self.notifier.notify("Squinting Detected", "Ensure you have proper lighting and are not too close to the screen.", "low")		#display tray notification

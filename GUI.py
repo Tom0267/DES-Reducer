@@ -1,6 +1,7 @@
 from imutils.video import FileVideoStream, VideoStream
 from PIL import Image, ImageTk
 from imutils import face_utils
+from Posture import Postures
 from Config import config
 from time import time
 import customtkinter
@@ -14,7 +15,13 @@ import cv2
 import csv
 
 class GUI(customtkinter.CTk):
+    def checkCamera(self):
+        if not self.vs.stream.isOpened():															    #check if the video stream was opened correctly
+            notifier.notify("Cannot open camera", "Ensure your camera is connected.", "critical")		#display tray notification
+            exit()																			            #exit the program
+        
     def videoLoop(self):   
+        self.checkCamera()                                                                      #check if the camera is connected
         frame = self.vs.read()                                                                  #read the frame from the threaded video stream
         frame = imutils.resize(frame, height = 500, width=450)                                  #resize the frame                     
         frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)                                           #convert the frame from BGR to RGB
@@ -50,10 +57,20 @@ class GUI(customtkinter.CTk):
         self.Description.insert("0.0", "Please look to the center of the screen and relax while I configure.\nPress Configure to begin.")      #display instructions
         self.Description.configure(state = "disabled")                                                                                        #disable editing textbox                      
         self.ConfigureButton.configure(command = self.config.configureRelax)                                                                  #change the command of the configure button to configure relax
+        
+    def postures(self):
+        self.BlinksButton.configure(fg_color='#1f538d')                                                                                       #change the color of the blink button
+        self.relaxButton.configure(fg_color='#1f538d')                                                                                        #change the color of the relax button
+        self.Description.configure(state = "normal")                                                                                          #enable editing textbox 
+        self.Description.delete("0.0", 'end')                                                                                                 #clear the textbox                     
+        self.Description.insert("0.0", "Please sit up straight and look to the center of the screen while I configure.\nPress Configure to begin.")      #display instructions
+        self.Description.configure(state = "disabled")                                                                                        #disable editing textbox                      
+        self.ConfigureButton.configure(command = self.config.configurePostures)                                                               #change the command of the configure button to configure postures
     
     def __init__(self, detector, predictor, notifier) -> None:
         self.vs = VideoStream(src=0).start()                                        #start the video stream thread
-        self.config = config(detector, predictor, self.vs, notifier)                #initialize the config class
+        self.posture = Postures(notifier, False)                                    #initialize the posture class
+        self.config = config(detector, predictor, self.vs, notifier, self.posture)       #initialize the config class
         self.app = customtkinter.CTk()                                              #initialize the customTKinter class                  
         self.app.protocol("WM_DELETE_WINDOW", self.onClose)                         #set the protocol for closing the GUI
         customtkinter.set_appearance_mode('system')                                 #set the appearance mode to system   
@@ -85,6 +102,8 @@ class GUI(customtkinter.CTk):
         self.BlinksButton.pack(padx=10, pady=10)                                                                                                    #add the blink button to the button frame
         self.relaxButton = customtkinter.CTkButton(self.ButtonFrame, text="Configure Relax", command= self.Relax, hover_color='blue')               #create the relax button
         self.relaxButton.pack(padx=10, pady=10)                                                                                                     #add the relax button to the button frame
+        self.postureButton = customtkinter.CTkButton(self.ButtonFrame, text="Configure Postures", command= self.postures, hover_color='blue')       #create the posture button
+        self.postureButton.pack(padx=10, pady=10)                                                                                                   #add the posture button to the button frame
         
         self.Description = customtkinter.CTkTextbox(self.TextFrame)                                                                                 #create the textbox
         self.Description.insert('0.0',"Please align the monitor just below eye level 2ft away from your face then select a configuration option on the left pannel to begin.")      #add the instructions to the textbox

@@ -11,14 +11,18 @@ import cv2
 import csv
 
 class config:
-    def __init__(self, detector, predictor, vs, notifier) -> None:
+    def __init__(self, detector, predictor, vs, notifier, posture) -> None:
+        self.postures = posture
         self.notifier = notifier
         self.blinked = False
         self.relaxed = False
+        self.postured = False
         self.vs = vs
         self.detector = detector
         self.predictor = predictor                                              
-        self.eyeArea = Eyes()                   
+        self.eyeArea = Eyes() 
+        self.neckArray = []    
+        self.torsoArray = []              
         self.EEdistances = []                  
         self.LEMDistances = []
         self.REMDistances = []           
@@ -30,12 +34,15 @@ class config:
     def checkDataFrame(self, func) -> None:
         if func == 'Relax':
             self.searchString = ['EE', 'LEM', 'REM', 'EAR']                             #defines search values for relax function
-        else:
+        elif func == 'Blinks':
             self.searchString = ['CEAR']                                                #defines search values for blinking function
+        elif func == 'Posture':
+            self.searchString = ['Neck', 'Torso']                                       #defines search values for posture function
         for label in self.searchString:                                                 #searches for values in dataframe
             self.dataframe.drop(self.dataframe.index[self.dataframe['Labels'] == label], inplace = True)   #drops values from dataframe
         
     def saveDataFrame(self) -> None:
+        print(self.dataframe)
         self.clearFile()                                                                    #clears contents of csv
         temp = self.dataframe.copy()                                                        #creates copy of dataframe
         self.dataframe.to_csv('Resources/configData.csv', index = False, header = True)     #save the dataframe to the csv file
@@ -101,7 +108,7 @@ class config:
                     self.calculateDistance(leftEye,rightEye,mouth)     #calculate the distance between the eyes
                     self.calculateEAR(leftEye,rightEye)               #calculate the eye aspect ratio
                     self.counter += 1
-                    if self.counter >= 5:
+                    if self.counter >= 10:
                         self.averages('Relax')
                         self.checkDataFrame('Relax')
                         self.dataframe = pd.concat([self.dataframe, pd.DataFrame({'Labels': ['EE'], 'Values': [self.EEDistance]})])  #write the average distance between the eyes to the dataframe
@@ -111,7 +118,7 @@ class config:
                         self.notifier.notify("Relaxed Configuration Complete","Well Done!", "normal")		#display tray notification
                         self.relaxed = True
                         self.loop = False 
-        if self.blinked == True and self.relaxed == True:
+        if self.blinked == True and self.relaxed == True and self.postured == True:
             self.saveDataFrame()
                         
     def configureBlinks(self) -> None:
@@ -134,12 +141,37 @@ class config:
                     rightEye = shape[rStart:rEnd]
                     self.calculateEAR(leftEye,rightEye)               #calculate the eye aspect ratio
                     self.counter += 1
-                    if self.counter >= 5:
+                    if self.counter >= 10:
                         self.averages('Blinks')
                         self.checkDataFrame('Blinks')
                         self.dataframe = pd.concat([self.dataframe, pd.DataFrame({'Labels': ['CEAR'], 'Values': [self.CEAR]})]) #write the average eye aspect ratio to the csv file
                         self.notifier.notify("Blink Configuration Complete", "Well Done!", "normal")		#display tray notification
                         self.blinked = True
                         self.loop = False 
-        if self.blinked == True and self.relaxed == True:
+        if self.blinked == True and self.relaxed == True and self.postured == True:
             self.saveDataFrame()
+            
+    def configurePostures(self) -> None:
+        self.checkCamera(self.vs)                                           #check if the camera is connected
+        self.checkDataFrame('Posture')                                      #check the dataframe for the posture values
+        self.counter = 0                                                    #initialize the counter
+        self.loop = True                                                    #initialize the loop flag
+        while self.loop == True:                                            #loop until the configuration is complete
+            print(self.counter)
+            while self.counter < 10:                                                 #loop until the counter reaches 10
+                self.postures.checkPosture(self.vs.read())                          #check the user's posture
+                self.neckArray.append(self.postures.neckAngle)                      #append the neck angle to the neck array
+                self.torsoArray.append(self.postures.torsoAngle)                    #append the torso angle to the torso array
+                self.counter += 1                                                        #increment the counter                     
+            neckAngle = np.mean(self.neckArray)                         #compute the average neck angle
+            torsoAngle = np.mean(self.torsoArray)                       #compute the average torso angle
+            self.checkDataFrame('Posture')                                   #check the dataframe for the posture values
+            self.dataframe = pd.concat([self.dataframe, pd.DataFrame({'Labels': ['Neck'], 'Values': [neckAngle]})])        #write the average neck angle to the dataframe
+            self.dataframe = pd.concat([self.dataframe, pd.DataFrame({'Labels': ['Torso'], 'Values': [torsoAngle]})])      #write the average torso angle to the dataframe
+            self.loop = False                                                                                                   #exit the loop
+        self.notifier.notify("Posture Configuration Complete", "Well Done!", "normal")		#display tray notification
+        self.postured = True                                                                #set the postured flag to true
+        if self.blinked == True and self.relaxed == True and self.postured == True:         #check if all the configurations are complete
+            self.saveDataFrame()                                                            #save the dataframe to the csv file
+            
+        

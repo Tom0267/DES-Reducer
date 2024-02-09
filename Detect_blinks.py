@@ -30,25 +30,18 @@ predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.da
 badFrames = 0																			#initialize the bad frames counter
 
 notifier = notif()                                              #initialize the notifier class
-config = GUI(detector, predictor, notifier)						#configure the application to the user's face
+posture = Postures(notifier, True)								#initialize the posture class
 distanceCalc = DistanceCalculator(notifier)				        #initialize the distance calculator class
 brightnessControl = BrightnessControl(notifier)					#initialize the brightness control class
-posture = Postures(notifier)									#initialize the posture class
-eyeMovement = EyeMovement(notifier)								#initialize the eye movement class
 
-vs = VideoStream(src=0).start()															            #start the video stream thread
-fps = FPS().start()																		            #start the FPS counter
-for i in range(0,20):
-    vs.read()                                                                                           #read the frame from the threaded video stream
-    fps.update()                                                                                        #update the FPS counter
-fps.stop()                                                                                              #stop the FPS counter
-print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))										            #display the FPS
+GUI(detector, predictor, notifier)			                    #configure the application to the user's face
+eyeMovement = EyeMovement(notifier)								#initialize the eye movement class
+vs = VideoStream(src=0).start()									#start the video stream thread
 while True:
     if not vs.stream.isOpened():															        #check if the video stream was opened correctly
         notifier.notify("Cannot open camera", "Ensure your camera is connected.", "critical")		#display tray notification
-        exit()																			            #exit the program	
+        exit()																			            #exit the program
         
-      
     frame = vs.read()																	#read the frame from the threaded video stream
     frame = imutils.resize(frame, height=337, width=450)					            #resize the frame
     schedule.run_pending()																#run the scheduler
@@ -63,9 +56,9 @@ while True:
     
     if not faces:												#check if a face was detected
         badFrames += 1											#increment the bad frames counter
-        print(badFrames / fps.fps())
-        if badFrames / fps.fps() > 5:								    #check if bad frames counter for greater than 5 seconds
+        if badFrames > 50:								        #check if bad frames counter for greater than 5 seconds
             notifier.notify("No Face Detected", "Ensure your face is in the frame.", "critical")		#display tray notification
+            badFrames = 0										#reset the bad frames counter
     else:
         for face in faces:
             shape = predictor(gray, face)							#determine the facial landmarks for the face region, then convert the facial landmark (x, y)-coordinates to a NumPy array

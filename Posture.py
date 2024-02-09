@@ -50,8 +50,8 @@ class Postures:
     if self.results.pose_landmarks:
       self.landmarkCoordinates()                                                                         #get the coordinates for the landmarks 
     
-      neckAngle = self.findAngle(self.leftShldr_x, self.leftShldr_y, self.leftEar_x, self.leftEar_y)          #calculate the angle between the left shoulder and left ear
-      torsoAngle = self.findAngle(self.nose_x, self.nose_y, self.leftShldr_x, self.leftShldr_y)               #calculate the angle between the nose and left shoulder
+      self.neckAngle = self.findAngle(self.leftShldr_x, self.leftShldr_y, self.leftEar_x, self.leftEar_y)          #calculate the angle between the left shoulder and left ear
+      self.torsoAngle = self.findAngle(self.nose_x, self.nose_y, self.leftShldr_x, self.leftShldr_y)               #calculate the angle between the nose and left shoulder
 
       cv2.circle(frame, (self.leftShldr_x, self.leftShldr_y), 5, (255, 0, 0), -1)                           #draw the circles for the left shoulder
       cv2.circle(frame, (self.rightShldr_x, self.rightShldr_y), 5, (255, 0, 0), -1)                         #draw the circles for the right shoulder
@@ -63,7 +63,7 @@ class Postures:
       
       self.checkElbows()                                                                                   #check if the user is stretching
       
-      if neckAngle > 26 and neckAngle < 29 and torsoAngle > 136 and torsoAngle < 139:               #check if the user has good posture (angles determined experimentally)
+      if self.neckAngle > 28 and self.neckAngle < 31 and self.torsoAngle > 134 and self.torsoAngle < 137:               #check if the user has good posture (angles determined experimentally)
         status = 'Good Posture'                                                                     #set the status to good posture   
         lineColor = (0, 255, 0)                                                                     #set the line color to green if the user has good posture  
         self.badFrames = 0                                                                          #reset the bad posture frames counter 
@@ -81,10 +81,15 @@ class Postures:
       cv2.line(frame, (self.nose_x, self.nose_y), (self.rightShldr_x, self.rightShldr_y), lineColor, 4)                     #draw the lines between the landmarks
       cv2.line(frame, (self.rightShldr_x, self.rightShldr_y), (self.rightEar_x, self.rightEar_y), lineColor, 4)             #draw the lines between the landmarks    
     
-      cv2.putText(frame, 'Neck : ' + str(int(neckAngle)) + '  Torso : ' + str(int(torsoAngle)), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)        #display neck and torse angles
-    cv2.imshow('Posture', frame)          #show the frame
+      cv2.putText(frame, 'Neck : ' + str(int(self.neckAngle)) + '  Torso : ' + str(int(self.torsoAngle)), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)        #display neck and torse angles
+    if self.configuring:
+      cv2.imshow('Posture', frame)          #show the frame
+      
+    def getAngles(self) -> tuple:
+      return self.neckAngle, self.torsoAngle
  
-  def __init__(self, notifier) -> None:
+  def __init__(self, notifier, configuring) -> None:
+    self.configuring = configuring                                                                      #initialize the configuring class
     self.notifier = notifier                                                                            #initialize the notifier class
     self.pose = mp.solutions.pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)       #initialize the pose class with the confidence values
     self.keyPoints = mp.solutions.pose.PoseLandmark                                                     #initialize the pose landmarks 
