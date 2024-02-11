@@ -30,12 +30,12 @@ predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.da
 badFrames = 0																			#initialize the bad frames counter
 
 notifier = notif()                                              #initialize the notifier class
-posture = Postures(notifier, True)								#initialize the posture class
 distanceCalc = DistanceCalculator(notifier)				        #initialize the distance calculator class
 brightnessControl = BrightnessControl(notifier)					#initialize the brightness control class
 
 GUI(detector, predictor, notifier)			                    #configure the application to the user's face
 eyeMovement = EyeMovement(notifier)								#initialize the eye movement class
+posture = Postures(notifier, True)								#initialize the posture class
 vs = VideoStream(src=0).start()									#start the video stream thread
 while True:
     if not vs.stream.isOpened():															        #check if the video stream was opened correctly

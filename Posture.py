@@ -1,4 +1,5 @@
 import mediapipe as mp
+import pandas as pd
 import math
 import cv2
 
@@ -63,7 +64,7 @@ class Postures:
       
       self.checkElbows()                                                                                   #check if the user is stretching
       
-      if self.neckAngle > 28 and self.neckAngle < 31 and self.torsoAngle > 134 and self.torsoAngle < 137:               #check if the user has good posture (angles determined experimentally)
+      if self.neckAngle > self.lowerNeckThresh and self.neckAngle < self.upperNeckThresh and self.torsoAngle > self.lowerTorsoThresh and self.torsoAngle < self.upperTorsoThresh:#check if the user has good posture definded by the user in calibration
         status = 'Good Posture'                                                                     #set the status to good posture   
         lineColor = (0, 255, 0)                                                                     #set the line color to green if the user has good posture  
         self.badFrames = 0                                                                          #reset the bad posture frames counter 
@@ -85,8 +86,8 @@ class Postures:
     if self.configuring:
       cv2.imshow('Posture', frame)          #show the frame
       
-    def getAngles(self) -> tuple:
-      return self.neckAngle, self.torsoAngle
+  def getAngles(self) -> tuple:
+    return self.neckAngle, self.torsoAngle
  
   def __init__(self, notifier, configuring) -> None:
     self.configuring = configuring                                                                      #initialize the configuring class
@@ -97,3 +98,18 @@ class Postures:
     self.elbowCounter = 0                                                                               #initialize the elbow counter
     self.height = 337                                                                                   #initialize the height of the frame
     self.width = 450                                                                                    #initialize the width of the frame
+    self.lowerNeckThresh = 26                                                                           #initialize the lower neck threshold
+    self.upperNeckThresh = 30                                                                           #initialize the upper neck threshold
+    self.lowerTorsoThresh = 125                                                                         #initialize the lower torso threshold
+    self.upperTorsoThresh = 135                                                                         #initialize the upper torso threshold
+    if configuring:
+      self.dataframe = pd.DataFrame(columns=['Labels', 'Values'])                                                 #initializes the dataframe
+      self.dataframe = pd.read_csv('Resources/configData.csv')                                                    #read the configuration file
+      neck = self.dataframe['Values'].loc[self.dataframe.index[self.dataframe['Labels'] == 'Neck']].tolist()		  #gets value from csv file
+      self.lowerNeckThresh = neck[0] - 2                                                                          #threshold for the lower neck angle
+      self.upperNeckThresh = neck[0] + 2                                                                          #threshold for the upper neck angle
+      torso = self.dataframe['Values'].loc[self.dataframe.index[self.dataframe['Labels'] == 'Torso']].tolist()		#gets value from csv file
+      self.lowerTorsoThresh = torso[0] - 2                                                                        #threshold for the lower torso angle
+      self.upperTorsoThresh = torso[0] + 2                                                                        #threshold for the upper torso angle
+      
+    print(self.lowerNeckThresh, self.upperNeckThresh, self.lowerTorsoThresh, self.upperTorsoThresh)   #print the thresholds
