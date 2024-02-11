@@ -7,6 +7,7 @@ from imutils import face_utils
 from Posture import Postures
 from notifier import notif
 from Config import config
+from Yawn import yawning
 from time import time
 from GUI import GUI
 import numpy as np
@@ -27,6 +28,7 @@ predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.da
 #predictor = dlib.shape_predictor("Resources/predictor.dat")		                    #initialize dlib's facial landmark predictor
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]							#grab the indexes of the facial landmarks for the left eye
 (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
+(mStart, mEnd) = face_utils.FACIAL_LANDMARKS_IDXS["mouth"]								#grab the indexes of the facial landmarks for the mouth
 badFrames = 0																			#initialize the bad frames counter
 
 notifier = notif()                                              #initialize the notifier class
@@ -36,6 +38,7 @@ brightnessControl = BrightnessControl(notifier)					#initialize the brightness c
 GUI(detector, predictor, notifier)			                    #configure the application to the user's face
 eyeMovement = EyeMovement(notifier)								#initialize the eye movement class
 posture = Postures(notifier, True)								#initialize the posture class
+yawns = yawning(notifier)										#initialize the yawn class
 vs = VideoStream(src=0).start()									#start the video stream thread
 while True:
     if not vs.stream.isOpened():															        #check if the video stream was opened correctly
@@ -64,14 +67,16 @@ while True:
             shape = predictor(gray, face)							#determine the facial landmarks for the face region, then convert the facial landmark (x, y)-coordinates to a NumPy array
             shape = face_utils.shape_to_np(shape)
             
-            leftEye = shape[lStart:lEnd]							#extract the left and right eye coordinates, then use the coordinates to calculate the eye aspect ratio for both eyes
-            rightEye = shape[rStart:rEnd]
+            leftEye = shape[lStart:lEnd]							#extract the left coordinates
+            rightEye = shape[rStart:rEnd]                           #extract the right eye coordinates
+            mouth = shape[mStart:mEnd]                              #extract the mouth coordinates
             
             dist = threading.Thread(distanceCalc.checkDist(leftEye,rightEye))						#create the distance calculator thread
             dist.start()											#start the brightness control thread
             
-            eyeMovement.checkMovement(leftEye,rightEye)				#check if the eyes are blinking or squinting
-            leftEyeHull, rightEyeHull = eyeMovement.getHull()
+            yawns.checkYawn(mouth, frame)									#check if the user is yawning
+            eyeMovement.checkMovement(leftEye,rightEye)				            #check if the eyes are blinking or squinting
+            leftEyeHull, rightEyeHull = eyeMovement.getHull()                   #get the hulls for the eyes to draw on the frame
             cv2.drawContours(frame, [leftEyeHull], -1, (0, 255, 0), 1)			#draw the hull around the left eye
             cv2.drawContours(frame, [rightEyeHull], -1, (0, 255, 0), 1)			#draw the hull around the right eye
             

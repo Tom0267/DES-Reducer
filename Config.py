@@ -42,7 +42,6 @@ class config:
             self.dataframe.drop(self.dataframe.index[self.dataframe['Labels'] == label], inplace = True)   #drops values from dataframe
         
     def saveDataFrame(self) -> None:
-        print(self.dataframe)
         self.clearFile()                                                                    #clears contents of csv
         temp = self.dataframe.copy()                                                        #creates copy of dataframe
         self.dataframe.to_csv('Resources/configData.csv', index = False, header = True)     #save the dataframe to the csv file
