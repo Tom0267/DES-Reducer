@@ -19,13 +19,12 @@ class yawning:
         return aspectRatio										#return the mouth aspect ratio
     
     def checkYawn(self, mouth, frame) -> None:
-        self.mouthRatio = self.mouthAspectRatio(mouth)				#mouth aspect ratio
-        print(self.mouthRatio)
+        self.mouthRatio = self.mouthAspectRatio(mouth)		    #mouth aspect ratio
         mouthHull = cv2.convexHull(mouth)						#calculate the convex hull for the mouth
-        if self.mouthRatio > 0.7:								#check if the mouth aspect ratio is greater than 0.7
+        if self.mouthRatio > 0.5:								#check if the mouth aspect ratio is greater than 0.7
             self.yawnCounter += 1								#increment the yawn counter
             if self.yawnCounter >= 8 and self.yawnCounter < 10:	#if the mouth was open for a sufficient number of frames
-                self.notifier.notify("Yawning Detected", "Take a break to rest your eyes.", "critical")	#display tray notification
+                self.notifier.notify("Yawning Detected", "If your'e getting tired, consider taking a break", "critical")	#display tray notification
         else :
             self.yawnCounter = 0								#reset the yawn counter
             

@@ -71,6 +71,8 @@ while True:
             rightEye = shape[rStart:rEnd]                           #extract the right eye coordinates
             mouth = shape[mStart:mEnd]                              #extract the mouth coordinates
             
+            yawned = threading.Thread(yawns.checkYawn(mouth, frame))		#create the yawn checker thread
+            yawned.start()											        #start the yawn checker thread
             dist = threading.Thread(distanceCalc.checkDist(leftEye,rightEye))						#create the distance calculator thread
             dist.start()											#start the brightness control thread
             
@@ -89,6 +91,7 @@ while True:
         brightness.join()									#join the brightness control thread
         dist.join()											#join the distance calculator thread
         pose.join()											#join the posture check thread
+        yawned.join()										#join the yawn checker thread
         
         if cv2.waitKey(30) & 0xFF ==ord('q'):				#hold q to quit
             break
