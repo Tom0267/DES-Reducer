@@ -1,4 +1,5 @@
 from imutils.video import FileVideoStream, VideoStream
+from datetime import datetime, timedelta
 from imutils import face_utils
 from EyeArea import Eyes
 import pandas as pd
@@ -24,8 +25,9 @@ class EyeMovement:
                 self.blink2 = np.datetime64('now')					    #record the time of the blink
                 if self.blink2 - self.blink1 >  8:						#check if the time between blinks is greater than 8 seconds
                     self.notifier.notify("Don't Forget To Blink", "For healthy eyes, you should be blinking every 5 seconds.", "low")
-                elif self.blink2 - self.blink1 < 2:						#check if the time between blinks is less than 2
+                elif self.blink2 - self.blink1 < 2 and self.notificationTime - self.blink2 >= self.notification_delay:			#check if the time between blinks is less than 2 seconds and the time since the last notification is greater than 20 seconds
                     self.notifier.notify("Rapid Blinking", "Take a break from the screen to ensure your eyes stay healythy.", "low")
+                    self.notificationTime = self.blink2
         else :
             self.blinkCounter = 0								                #reset the eye frame blink Counter
             self.blink1 = self.blink2
@@ -67,3 +69,5 @@ class EyeMovement:
         self.blinkCounter = 0									#frame blink Counter
         self.squintCounter = 0									#frame squint Counter
         self.total = 0									        #total number of blinks
+        self.notificationTime = 0                               #time of the last notification
+        self.notification_delay = timedelta(seconds=20)         #set the notification delay to 20 seconds for rapid blinking notifications

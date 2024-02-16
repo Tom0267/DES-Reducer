@@ -87,6 +87,7 @@ while True:
             cv2.putText(frame, "Blinks: {}".format(total), (10, 30),cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)				#draw the total number of blinks on the frame
             cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30),cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)				#draw the calculated eye aspect ratio on the frame
             
+        cv2.namedWindow("Eye Care", cv2.WINDOW_NORMAL)		#display the frame in full screen
         cv2.imshow("Eye Care", frame)						#show the frame
         brightness.join()									#join the brightness control thread
         dist.join()											#join the distance calculator thread

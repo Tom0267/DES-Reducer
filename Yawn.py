@@ -11,6 +11,7 @@ class yawning:
         return aspectRatio										#return the mouth aspect ratio
     
     def checkYawn(self, mouth, frame) -> None:
+        frame = frame.copy()									#copy the frame to avoid modifying the original frame
         self.mouthRatio = self.mouthAspectRatio(mouth)		    #mouth aspect ratio
         mouthHull = cv2.convexHull(mouth)						#calculate the convex hull for the mouth
         if self.mouthRatio > 0.5:								#check if the mouth aspect ratio is greater than 0.7
@@ -20,7 +21,7 @@ class yawning:
         else :
             self.yawnCounter = 0								#reset the yawn counter
             
-        cv2.drawContours(frame, [mouthHull], -1, (0, 255, 0), 1)			#draw the hull around the left eye
+        cv2.drawContours(frame, [mouthHull], -1, (0, 255, 0), 1)			    #draw the hull around the left eye
         cv2.putText(frame, "Yawn: {:.2f}".format(self.mouthRatio), (300, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)	#display the mouth aspect ratio on the frame
         cv2.imshow("Yawn Checker", frame)										#display the frame
         
