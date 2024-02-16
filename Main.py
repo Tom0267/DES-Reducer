@@ -94,7 +94,7 @@ while True:
         yawned.join()										#join the yawn checker thread
         
         if cv2.waitKey(30) & 0xFF ==ord('q'):				#hold q to quit
-            break
+            break                                           #break the loop
 
 cv2.destroyAllWindows()								#close all windows
 vs.stop()		                                    #stop the video stream
