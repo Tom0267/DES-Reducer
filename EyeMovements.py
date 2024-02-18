@@ -68,5 +68,5 @@ class EyeMovement:
         self.blinkCounter = 0									#frame blink Counter
         self.squintCounter = 0									#frame squint Counter 
         self.total = 0									        #total number of blinks counter
-        self.notificationTime = 0                               #time of the last notification for rapid blinking
+        self.notificationTime = np.datetime64('now')            #time of the last notification for rapid blinking to prevent spamming 
         self.notificationDelay = 20                             #set the notification delay to 20 seconds for rapid blinking notifications

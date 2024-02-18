@@ -4,6 +4,7 @@ from DistanceCalc import DistanceCalculator
 from EyeMovements import EyeMovement
 from schedule import repeat, every
 from imutils import face_utils
+from EyeRedness import Redness
 from Posture import Postures
 from notifier import notif
 from Config import config
@@ -34,6 +35,7 @@ badFrames = 0																			#initialize the bad frames counter
 notifier = notif()                                              #initialize the notifier class
 distanceCalc = DistanceCalculator(notifier)				        #initialize the distance calculator class
 brightnessControl = BrightnessControl(notifier)					#initialize the brightness control class
+eyeRedness = Redness(notifier)									#initialize the redness class
 
 GUI(detector, predictor, notifier)			                    #configure the application to the user's face
 eyeMovement = EyeMovement(notifier)								#initialize the eye movement class
@@ -71,12 +73,14 @@ while True:
             rightEye = shape[rStart:rEnd]                           #extract the right eye coordinates
             mouth = shape[mStart:mEnd]                              #extract the mouth coordinates
             
-            yawned = threading.Thread(yawns.checkYawn(mouth, frame))		#create the yawn checker thread
-            yawned.start()											        #start the yawn checker thread
+            yawned = threading.Thread(yawns.checkYawn(mouth, frame))		                        #create the yawn checker thread
+            yawned.start()											                                #start the yawn checker thread
             dist = threading.Thread(distanceCalc.checkDist(leftEye,rightEye))						#create the distance calculator thread
-            dist.start()											#start the brightness control thread
+            dist.start()											                                #start the distance calculator thread
+            redness = threading.Thread(eyeRedness.checkRedness(frame, leftEye, rightEye))			#create the redness checker thread
+            redness.start()											                                #start the redness checker thread
             
-            yawns.checkYawn(mouth, frame)									#check if the user is yawning
+            yawns.checkYawn(mouth, frame)									    #check if the user is yawning
             eyeMovement.checkMovement(leftEye,rightEye)				            #check if the eyes are blinking or squinting
             leftEyeHull, rightEyeHull = eyeMovement.getHull()                   #get the hulls for the eyes to draw on the frame
             cv2.drawContours(frame, [leftEyeHull], -1, (0, 255, 0), 1)			#draw the hull around the left eye
@@ -92,6 +96,7 @@ while True:
         dist.join()											#join the distance calculator thread
         pose.join()											#join the posture check thread
         yawned.join()										#join the yawn checker thread
+        redness.join()										#join the redness checker thread
         
         if cv2.waitKey(30) & 0xFF ==ord('q'):				#hold q to quit
             break                                           #break the loop
