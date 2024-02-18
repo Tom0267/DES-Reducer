@@ -61,6 +61,7 @@ class GUI(customtkinter.CTk):
     def postures(self):
         self.BlinksButton.configure(fg_color='#1f538d')                                                                                       #change the color of the blink button
         self.relaxButton.configure(fg_color='#1f538d')                                                                                        #change the color of the relax button
+        self.postureButton.configure(fg_color='green')                                                                                        #change the color of the posture button
         self.Description.configure(state = "normal")                                                                                          #enable editing textbox 
         self.Description.delete("0.0", 'end')                                                                                                 #clear the textbox                     
         self.Description.insert("0.0", "Please sit up straight and look to the center of the screen while I configure.\nPress Configure to begin.")      #display instructions
