@@ -28,7 +28,7 @@ class Redness:
             self.notifier.notify("Red Eyes", "if your eyes are getting red, Take a break to rest your eyes and ensure they are hydrated", "critical")         #notify the user that their eyes are red
             self.notificationTime = np.datetime64('now')
             
-    def __init__(self, notifier):
+    def __init__(self, notifier) -> None:
         self.notifier = notifier                                #initialize the notifier class 
         self.notificationTime = np.datetime64('now')            #initialize the notification time to the current time 
         self.notificationDelay = 20                             #set the notification delay to 20 seconds for rapid blinking notifications 

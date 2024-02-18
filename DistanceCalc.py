@@ -2,15 +2,12 @@ import pandas as pd
 import numpy as np
 import cv2
 class DistanceCalculator:
-    def checkDist(self, leftEye, rightEye) -> None:
-        coff = np.polyfit(self.distance_pixel, self.distance_cm, 2)         #get corrlation coffs
-        a, b, c = coff                                                      #unpack the coffs
-                  
+    def checkDist(self, leftEye, rightEye) -> None:                  
         leftEyeCenter = leftEye.mean(axis=0)				    #compute the center of mass for each eye
         rightEyeCenter = rightEye.mean(axis=0)                #compute the center of mass for each eye
         eyeDistance = np.linalg.norm(leftEyeCenter - rightEyeCenter)        #compute the euclidean distance between the eye centers
         
-        distance_cm = a*eyeDistance**2+b*eyeDistance+c-15                      #calculate the distance in cm
+        distance_cm = self.a*eyeDistance**2+self.b*eyeDistance+self.c-15                      #calculate the distance in cm
         if distance_cm < 55:                                                                                                        #for safe use, distance to screen should be grater than 51 cm
             self.badFrames += 1                                                                                                     #increment the bad frames counter
             if self.badFrames > 20 and self.badFrames <22:                                                                          #check if the bad frames counter is greater than 20
@@ -27,4 +24,8 @@ class DistanceCalculator:
         distance_df = pd.read_csv('distance_xy.csv')            #read the csv data
         self.distance_pixel = distance_df['distance_pixel']     #read the distance data
         self.distance_cm = distance_df['distance_cm']           #read the distance data
+        
+        coff = np.polyfit(self.distance_pixel, self.distance_cm, 2)         #get corrlation coefficient
+        self.a, self.b, self.c = coff                                       #unpack the coefficients
+        
         self.badFrames = 0                                      #initialize the bad frames counter

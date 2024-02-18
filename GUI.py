@@ -47,7 +47,6 @@ class GUI(customtkinter.CTk):
         self.Description.insert("0.0", "Please close your eyes.\nA notification will appear when configuration is complete\nPress Configure to begin.")   #display instructions
         self.Description.configure(state = "disabled")                                              #disable editing textbox
         self.ConfigureButton.configure(command = self.config.configureBlinks)                       #change the command of the configure button to configure blinks
-        
     
     def Relax(self):
         self.BlinksButton.configure(fg_color='#1f538d')                                                                                       #change the color of the blink button
@@ -112,4 +111,3 @@ class GUI(customtkinter.CTk):
         self.Description.pack(padx=10, pady=10, fill='both')                                                   #add the textbox to the text frame
         
         self.start()                                                                                           #start the GUI
-            
