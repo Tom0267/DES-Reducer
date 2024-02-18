@@ -3,11 +3,15 @@ import cv2
 
 class Redness:
     
-    def getRedness(self, roi):
-        b, g, r = cv2.split(roi)                            #split the roi into its BGR components
-        redness = (r - ((g + b) / 2))                       #calculate the redness of the roi
-        redness = np.mean(redness)                          #get the average redness of the roi
-        return redness                                      #return the redness of the roi
+    def getRedness(self, roi) -> float:
+        roi = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)                        #convert the roi to the HSV (hue, saturation, and lightness) color space 
+        lowerRed = np.array([0, 20, 0], dtype=np.uint8)                   #set the lower red threshold 
+        upperRed = np.array([20, 100, 100], dtype=np.uint8)               #set the upper red threshold 
+        
+        redMask = cv2.inRange(roi, lowerRed, upperRed)                   #create a mask for the red pixels in the roi 
+        avgRed = np.mean(roi[redMask > 0])                               #get the average red intensity of the roi 
+        
+        return avgRed
     
     def checkRedness(self, frame, leftEye, rightEye) -> None:
         copy = frame.copy()                                     #create a copy of the frame
