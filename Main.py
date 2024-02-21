@@ -20,10 +20,12 @@ import dlib
 import cv2
 
 #@repeat(every(2).seconds)										#repeat the function every 2 seconds to test
-@repeat(every(25).minutes)										#repeat the function every 25 minutes
+@repeat(every(delayTime).minutes)										#repeat the function every 25 minutes
 def takeBreak() -> None:
     notifier.notify("Take A Break", "You have been working for 20 minutes. Take a break to rest your eyes.", "critical")   #remind the user to take a break
+    delayTime = 25                                                                                                         #set the delay time for the break reminder to 25 minutes to include the break time 
 
+delayTime = 20                                                                          #set the delay time for the break reminder
 detector = dlib.get_frontal_face_detector() 											#initialize dlib's face detector
 predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.dat")		#initialize dlib's facial landmark predictor
 #predictor = dlib.shape_predictor("Resources/predictor.dat")		                    #initialize dlib's facial landmark predictor
