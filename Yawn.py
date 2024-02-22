@@ -1,6 +1,5 @@
 import numpy as np
 import cv2
-
 class yawning:
     def mouthAspectRatio(self, mouth) -> float:
         A = np.linalg.norm(mouth[13] - mouth[19])				#distance between the corners of the mouth

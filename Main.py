@@ -14,10 +14,8 @@ import numpy as np
 import threading
 import schedule
 import imutils
-import time
 import dlib
 import cv2
-
 
 delayTime = 20                                                                          #set the delay time for the break reminder
 
