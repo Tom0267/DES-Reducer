@@ -44,6 +44,7 @@ class Postures:
     self.rightElbow_y = int(self.imagePoints.landmark[self.keyPoints.RIGHT_ELBOW].y * self.height)   #get the y coordinates for the right elbow
   
   def checkPosture(self, frame) -> None:
+    frame = frame.copy()                                                                          #copy the frame to avoid modifying the original frame
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)                                                #convert the frame from BGR to RGB    
     self.results = self.pose.process(frame)                                                       #get the landmarks from the frame
     self.imagePoints = self.results.pose_landmarks                                                #get the landmarks from the frame    

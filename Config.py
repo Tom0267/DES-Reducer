@@ -5,19 +5,17 @@ from EyeArea import Eyes
 import pandas as pd
 import numpy as np
 import threading
-import imutils
-import dlib
 import cv2
 import csv
 
 class config:
-    def __init__(self, detector, predictor, vs, notifier, posture) -> None:
+    def __init__(self, detector, predictor, cap, notifier, posture) -> None:
         self.postures = posture
         self.notifier = notifier
         self.blinked = False
         self.relaxed = False
         self.postured = False
-        self.vs = vs
+        self.cap = cap
         self.detector = detector
         self.predictor = predictor                                              
         self.eyeArea = Eyes() 
@@ -79,20 +77,20 @@ class config:
         rightEAR = self.eyeArea.eyeAspectRatio(rightEye)			    #right eye aspect ratio
         self.ear.append((leftEAR + rightEAR) / 2.0)				        #append the average the eye aspect ratio together for both eyes
     
-    def checkCamera(self, vs) -> None:
-        if not vs.stream.isOpened():																#check if the video stream was opened correctly
+    def checkCamera(self, cap) -> None:
+        if not cap.isOpened():																#check if the video stream was opened correctly
             self.notifier.notify("Cannot open camera", "Ensure your camera is connected.", "normal")		#display tray notification
             exit()
             
     def configureRelax(self) -> None:
-        self.checkCamera(self.vs)
+        self.checkCamera(self.cap)                                                              #check if the camera is connected
         (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]							#grab the indexes of the facial landmarks for the left eye
         (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
         (mStart, mEnd) = face_utils.FACIAL_LANDMARKS_IDXS["mouth"]							#grab the indexes of the facial landmarks for the mouth
         self.counter = 0
         self.loop = True
         while self.loop == True:
-            frame = self.vs.read()
+            ret, frame = self.cap.read()
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = self.detector(gray, 0)									#detect faces in the grayscale frame
             if not faces:												#check if a face was detected
@@ -121,13 +119,13 @@ class config:
             self.saveDataFrame()
                         
     def configureBlinks(self) -> None:
-        self.checkCamera(self.vs)
+        self.checkCamera(self.cap)
         (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]							#grab the indexes of the facial landmarks for the left eye
         (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
         self.counter = 0
         self.loop = True
         while self.loop == True:
-            frame = self.vs.read()
+            ret, frame = self.cap.read()
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = self.detector(gray, 0)									#detect faces in the grayscale frame
             if not faces:												#check if a face was detected
@@ -151,14 +149,14 @@ class config:
             self.saveDataFrame()
             
     def configurePostures(self) -> None:
-        self.checkCamera(self.vs)                                           #check if the camera is connected
+        self.checkCamera(self.cap)                                           #check if the camera is connected
         self.checkDataFrame('Posture')                                      #check the dataframe for the posture values
         self.counter = 0                                                    #initialize the counter
         self.loop = True                                                    #initialize the loop flag
         while self.loop == True:                                            #loop until the configuration is complete
-            print(self.counter)
             while self.counter < 10:                                                 #loop until the counter reaches 10
-                self.postures.checkPosture(self.vs.read())                          #check the user's posture
+                ret, frame = self.cap.read()                                         #read the frame from the camera
+                self.postures.checkPosture(frame)                          #check the user's posture
                 self.neckArray.append(self.postures.neckAngle)                      #append the neck angle to the neck array
                 self.torsoArray.append(self.postures.torsoAngle)                    #append the torso angle to the torso array
                 self.counter += 1                                                        #increment the counter                     

@@ -1,13 +1,7 @@
-from imutils.video import FileVideoStream, VideoStream
-from imutils import face_utils
 from EyeArea import Eyes
 import pandas as pd
 import numpy as np
-import threading
-import imutils
-import dlib
 import cv2
-import csv
 class EyeMovement:
     def checkMovement(self,leftEye,rightEye) -> None:
         self.leftEAR = self.eyeArea.eyeAspectRatio(leftEye)				#left eye aspect ratio
@@ -54,8 +48,6 @@ class EyeMovement:
         self.blink2 = np.datetime64('now')                      #initializes blink2
         self.dataframe = pd.DataFrame(columns=['Labels', 'Values'])     #initializes the dataframe
         self.dataframe = pd.read_csv('Resources/configData.csv')        #read the configuration file
-        self.leftEye = 0                                        #initializes left eye
-        self.rightEye = 0                                       #initializes right eye
         self.ear = 0.00                                         #initializes eye aspect ratio
         self.leftEyeHull = 0                                    #initializes eye hull
         self.rightEyeHull = 0                                   #initializes eye hull

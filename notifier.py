@@ -2,7 +2,6 @@ from notifypy import Notify
 
 class notif:
     def notify(self, title, message, urgency) -> None:
-        
         self.notification.title = title
         self.notification.message = message
         self.notification.urgency = urgency

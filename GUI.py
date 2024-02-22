@@ -1,29 +1,20 @@
-from imutils.video import FileVideoStream, VideoStream
 from PIL import Image, ImageTk
-from imutils import face_utils
 from Posture import Postures
 from Config import config
-from time import time
 import customtkinter
-import numpy as np
-import threading
-import imutils
-import tkinter
-import time
-import dlib
+import tkinter                      #may be able to remove this import
 import cv2
-import csv
 
 class GUI(customtkinter.CTk):
     def checkCamera(self):
-        if not self.vs.stream.isOpened():															    #check if the video stream was opened correctly
-            notifier.notify("Cannot open camera", "Ensure your camera is connected.", "critical")		#display tray notification
+        if not self.cap.isOpened():															    #check if the video stream was opened correctly
+            self.notifier.notify("Cannot open camera", "Ensure your camera is connected.", "critical")		#display tray notification
             exit()																			            #exit the program
         
     def videoLoop(self):   
         self.checkCamera()                                                                      #check if the camera is connected
-        frame = self.vs.read()                                                                  #read the frame from the threaded video stream
-        frame = imutils.resize(frame, height = 500, width=450)                                  #resize the frame                     
+        ret, frame = self.cap.read()                                                            #read the frame from the threaded video stream
+        frame = cv2.resize(frame, (450, 350))                                                   #resize the frame                     
         frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)                                           #convert the frame from BGR to RGB
         captured_image = Image.fromarray(frame)                                                 #convert the frame to an image
         photo_image = ImageTk.PhotoImage(image=captured_image)                                  #convert the image to a tkinter image 
@@ -35,7 +26,7 @@ class GUI(customtkinter.CTk):
         self.app.mainloop()                                                                     #start the GUI loop                                      
         
     def onClose(self):       
-        self.vs.stop()                                                                          #stop the video stream                
+        self.cap.release()                                                                      #release the camera                
         self.app.quit()                                                                         #close the GUI
         self.app.destroy()                                                                      #destroy the GUI                          
         
@@ -68,9 +59,10 @@ class GUI(customtkinter.CTk):
         self.ConfigureButton.configure(command = self.config.configurePostures)                                                               #change the command of the configure button to configure postures
     
     def __init__(self, detector, predictor, notifier) -> None:
-        self.vs = VideoStream(src=0).start()                                        #start the video stream thread
+        self.cap = cv2.VideoCapture(0)                                              #start the video stream thread
+        self.notifier = notifier                                                    #initialize the notifier class
         self.posture = Postures(notifier, False)                                    #initialize the posture class
-        self.config = config(detector, predictor, self.vs, notifier, self.posture)       #initialize the config class
+        self.config = config(detector, predictor, self.cap, notifier, self.posture)       #initialize the config class
         self.app = customtkinter.CTk()                                              #initialize the customTKinter class                  
         self.app.protocol("WM_DELETE_WINDOW", self.onClose)                         #set the protocol for closing the GUI
         customtkinter.set_appearance_mode('system')                                 #set the appearance mode to system   

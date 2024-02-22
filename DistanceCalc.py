@@ -8,11 +8,11 @@ class DistanceCalculator:
         eyeDistance = np.linalg.norm(leftEyeCenter - rightEyeCenter)        #compute the euclidean distance between the eye centers
         
         distance_cm = self.a*eyeDistance**2+self.b*eyeDistance+self.c-15                      #calculate the distance in cm
-        if distance_cm < 55:                                                                                                        #for safe use, distance to screen should be grater than 51 cm
+        if distance_cm < 51:                                                                                                        #for safe use, distance to screen should be grater than 51 cm
             self.badFrames += 1                                                                                                     #increment the bad frames counter
             if self.badFrames > 20 and self.badFrames <22:                                                                          #check if the bad frames counter is greater than 20
                 self.notifier.notify("Too Close To Screen", f'{int(distance_cm)} cm - Not Safe', "normal")		                    #display tray notification
-        elif distance_cm > 70:                                                                                                      #check if the distance is greater than 65 cm
+        elif distance_cm > 63:                                                                                                      #check if the distance is greater than 63 cm
             self.badFrames += 1                                                                                                     #increment the bad frames counter
             if self.badFrames > 20 and self.badFrames <22:
                 self.notifier.notify("Too Far From Screen", f'{int(distance_cm)} cm - Not Safe', "normal")		                    #display tray notification            
@@ -24,8 +24,8 @@ class DistanceCalculator:
         distance_df = pd.read_csv('distance_xy.csv')            #read the csv data
         self.distance_pixel = distance_df['distance_pixel']     #read the distance data
         self.distance_cm = distance_df['distance_cm']           #read the distance data
+        self.badFrames = 0                                      #initialize the bad frames counter
         
         coff = np.polyfit(self.distance_pixel, self.distance_cm, 2)         #get coefficients of the polynomial
         self.a, self.b, self.c = coff                                       #unpack the coefficients
         
-        self.badFrames = 0                                      #initialize the bad frames counter
