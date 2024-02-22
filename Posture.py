@@ -55,7 +55,7 @@ class Postures:
       self.neckAngle = self.findAngle(self.leftShldr_x, self.leftShldr_y, self.leftEar_x, self.leftEar_y)          #calculate the angle between the left shoulder and left ear
       self.torsoAngle = self.findAngle(self.nose_x, self.nose_y, self.leftShldr_x, self.leftShldr_y)               #calculate the angle between the nose and left shoulder
       
-      if self.configured:                                                                                     #check if the user has configured the posture thresholds
+      if self.configured:                                                                                     #check if the program is being used for configuring or main use 
         cv2.circle(frame, (self.leftShldr_x, self.leftShldr_y), 5, (255, 0, 0), -1)                           #draw the circles for the left shoulder
         cv2.circle(frame, (self.rightShldr_x, self.rightShldr_y), 5, (255, 0, 0), -1)                         #draw the circles for the right shoulder
         cv2.circle(frame, (self.leftEar_x, self.leftEar_y), 5, (255, 0, 0), -1)                               #draw the circles for the left ear
@@ -75,7 +75,7 @@ class Postures:
           lineColor = (0, 0, 255)                                                              #set the line color to red if the user has bad posture
           self.badFrames += 1                                                                  #increment the bad posture frames counter
           if self.badFrames >= 15 and self.badFrames < 17:
-            self.notifier.notify("Bad Posture Detected", "Ensure you are sitting up straight.", "normal")		       #display tray notification    
+            self.notifier.notify("Bad Posture Detected", "Ensure you are sitting up straight.", "normal")		                  #display tray notification    
           
         cv2.putText(frame, status, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, lineColor, 2)                                     #display the status of the user's posture
         cv2.line(frame, (self.leftShldr_x, self.leftShldr_y), (self.leftEar_x, self.leftEar_y), lineColor, 4)                 #draw the lines between the landmarks
@@ -85,13 +85,13 @@ class Postures:
         cv2.line(frame, (self.rightShldr_x, self.rightShldr_y), (self.rightEar_x, self.rightEar_y), lineColor, 4)             #draw the lines between the landmarks    
       
         cv2.putText(frame, 'Neck : ' + str(int(self.neckAngle)) + '  Torso : ' + str(int(self.torsoAngle)), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)        #display neck and torse angles
-        cv2.imshow('Posture', frame)          #show the frame
+        cv2.imshow('Posture', frame)           #show the frame
       
   def getAngles(self) -> tuple:
-    return self.neckAngle, self.torsoAngle                #return the neck and torso angles as a tuple
+    return self.neckAngle, self.torsoAngle                                                              #return the neck and torso angles as a tuple
  
   def __init__(self, notifier, configured) -> None:
-    self.configured = configured                                                                      #initialize the configuring class
+    self.configured = configured                                                                        #initialize the configuring class
     self.notifier = notifier                                                                            #initialize the notifier class
     self.pose = mp.solutions.pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)       #initialize the pose class with the confidence values
     self.keyPoints = mp.solutions.pose.PoseLandmark                                                     #initialize the pose landmarks 
@@ -99,7 +99,7 @@ class Postures:
     self.elbowCounter = 0                                                                               #initialize the elbow counter
     self.height = 337                                                                                   #initialize the height of the frame
     self.width = 450                                                                                    #initialize the width of the frame
-    if configured:
+    if configured:                                                                                      #check if the user has configured the posture thresholds 
       self.dataframe = pd.DataFrame(columns=['Labels', 'Values'])                                                 #initializes the dataframe
       self.dataframe = pd.read_csv('Resources/configData.csv')                                                    #read the configuration file
       neck = self.dataframe['Values'].loc[self.dataframe.index[self.dataframe['Labels'] == 'Neck']].tolist()		  #gets value from csv file

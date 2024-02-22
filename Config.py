@@ -83,13 +83,13 @@ class config:
             exit()
             
     def configureRelax(self) -> None:
-        self.checkCamera(self.cap)                                                              #check if the camera is connected
         (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]							#grab the indexes of the facial landmarks for the left eye
         (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
         (mStart, mEnd) = face_utils.FACIAL_LANDMARKS_IDXS["mouth"]							#grab the indexes of the facial landmarks for the mouth
         self.counter = 0
         self.loop = True
         while self.loop == True:
+            self.checkCamera(self.cap)                                                              #check if the camera is connected
             ret, frame = self.cap.read()
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = self.detector(gray, 0)									#detect faces in the grayscale frame
@@ -119,12 +119,12 @@ class config:
             self.saveDataFrame()
                         
     def configureBlinks(self) -> None:
-        self.checkCamera(self.cap)
         (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]							#grab the indexes of the facial landmarks for the left eye
         (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
         self.counter = 0
         self.loop = True
         while self.loop == True:
+            self.checkCamera(self.cap)
             ret, frame = self.cap.read()
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = self.detector(gray, 0)									#detect faces in the grayscale frame
@@ -149,12 +149,12 @@ class config:
             self.saveDataFrame()
             
     def configurePostures(self) -> None:
-        self.checkCamera(self.cap)                                           #check if the camera is connected
         self.checkDataFrame('Posture')                                      #check the dataframe for the posture values
         self.counter = 0                                                    #initialize the counter
         self.loop = True                                                    #initialize the loop flag
         while self.loop == True:                                            #loop until the configuration is complete
             while self.counter < 10:                                                 #loop until the counter reaches 10
+                self.checkCamera(self.cap)                                           #check if the camera is connected
                 ret, frame = self.cap.read()                                         #read the frame from the camera
                 self.postures.checkPosture(frame)                          #check the user's posture
                 self.neckArray.append(self.postures.neckAngle)                      #append the neck angle to the neck array

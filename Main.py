@@ -19,7 +19,7 @@ import cv2
 
 delayTime = 20                                                                          #set the delay time for the break reminder
 
-#@repeat(every(2).seconds)										#repeat the function every 2 seconds to test
+#@repeat(every(2).seconds)										        #repeat the function every 2 seconds for testing purposes
 @repeat(every(delayTime).minutes)										#repeat the function every 25 minutes
 def takeBreak() -> None:
     notifier.notify("Take A Break", "You have been working for 20 minutes. Take a break to rest your eyes.", "critical")   #remind the user to take a break
