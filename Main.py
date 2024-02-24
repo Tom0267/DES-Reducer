@@ -67,6 +67,7 @@ while True:
                 notifier.notify("No Face Detected", "Ensure your face is in the frame.", "critical")		#display tray notification
                 badFrames = 0										#reset the bad frames counter
         else:
+            numOfFaces = 0                                                 #initialize the number of faces counter
             for face in faces:
                 shape = predictor(gray, face)							#determine the facial landmarks for the face region, then convert the facial landmark (x, y)-coordinates to a NumPy array
                 shape = face_utils.shape_to_np(shape)                   #convert the facial landmark (x, y)-coordinates to a NumPy array
@@ -89,8 +90,9 @@ while True:
                 
                 total = eyeMovement.getTotal()                                      #get the total number of blinks
                 ear = eyeMovement.getEAR()                                          #get the eye aspect ratio
-                cv2.putText(frame, "Blinks: {}".format(total), (10, 30),cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)				#draw the total number of blinks on the frame
-                cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30),cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)				#draw the calculated eye aspect ratio on the frame
+                cv2.putText(frame, "Blinks: {}".format(total), (10, 30 + (numOfFaces*25)),cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)				#draw the total number of blinks on the frame
+                cv2.putText(frame, "EAR: {:.2f}".format(ear), (300, 30 + (numOfFaces*25)),cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)				#draw the calculated eye aspect ratio on the frame
+                numOfFaces += 1                                 #increment the number of faces counter
                 
             cv2.imshow("Eye Care", frame)						#show the frame
             brightness.join()									#join the brightness control thread

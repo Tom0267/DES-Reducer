@@ -21,7 +21,7 @@ class DistanceCalculator:
     
     def __init__(self, notifier) -> None:
         self.notifier = notifier                                #initialize the notifier class
-        distance_df = pd.read_csv('distance_xy.csv')            #read the csv data
+        distance_df = pd.read_csv('Resources/distance_xy.csv')            #read the csv data
         self.distance_pixel = distance_df['distance_pixel']     #read the distance data
         self.distance_cm = distance_df['distance_cm']           #read the distance data
         self.badFrames = 0                                      #initialize the bad frames counter
