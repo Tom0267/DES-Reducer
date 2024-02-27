@@ -68,6 +68,7 @@ class GUI(customtkinter.CTk):
         customtkinter.set_appearance_mode('system')                                 #set the appearance mode to system   
         customtkinter.set_default_color_theme('dark-blue')                          #set the default color theme to dark blue
         self.app.title("Eye Care Configurator")                                     #set the title of the GUI         
+        self.app.iconbitmap('Resources/Icon_small.ico')                                    #set the icon of the GUI
         self.app.geometry("1000x800")                                               #set the size of the GUI
         
         self.leftFrame = customtkinter.CTkFrame(self.app)                           #create the left frame
@@ -101,5 +102,9 @@ class GUI(customtkinter.CTk):
         self.Description.insert('0.0',"Please align the monitor just below eye level 2ft away from your face then select a configuration option on the left pannel to begin.")      #add the instructions to the textbox
         self.Description.configure(state='disabled', wrap = 'word', font = ('Arial', 20))                      #configure the textbox
         self.Description.pack(padx=10, pady=10, fill='both')                                                   #add the textbox to the text frame
+        self.info = customtkinter.CTkTextbox(self.middleFrame)                                                   #create the textbox
+        self.info.insert('0.0', "Once all 3 options are configured, Close the window to begin monitoring.")    #add the instructions to the textbox
+        self.info.configure(state='disabled', wrap = 'word', font = ('Arial', 20))                             #configure the textbox
+        self.info.pack(padx=10, pady=10, fill='x')                                                         #add the textbox to the text frame
         
         self.start()                                                                                           #start the GUI

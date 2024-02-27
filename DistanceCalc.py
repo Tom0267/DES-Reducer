@@ -3,9 +3,9 @@ import numpy as np
 import cv2
 class DistanceCalculator:
     def checkDist(self, leftEye, rightEye) -> None:                  
-        leftEyeCenter = leftEye.mean(axis=0)				    #compute the center of mass for each eye
-        rightEyeCenter = rightEye.mean(axis=0)                #compute the center of mass for each eye
-        eyeDistance = np.linalg.norm(leftEyeCenter - rightEyeCenter)        #compute the euclidean distance between the eye centers
+        leftEyeCenter = leftEye.mean(axis=0)				                #compute the center of mass for each eye
+        rightEyeCenter = rightEye.mean(axis=0)                              #compute the center of mass for each eye
+        eyeDistance = np.linalg.norm(leftEyeCenter - rightEyeCenter)        #compute the distance between the eye centers
         
         distance_cm = self.a*eyeDistance**2+self.b*eyeDistance+self.c-15                      #calculate the distance in cm
         if distance_cm < 51:                                                                                                        #for safe use, distance to screen should be grater than 51 cm
@@ -21,11 +21,10 @@ class DistanceCalculator:
     
     def __init__(self, notifier) -> None:
         self.notifier = notifier                                #initialize the notifier class
-        distance_df = pd.read_csv('Resources/distance_xy.csv')            #read the csv data
+        distance_df = pd.read_csv('Resources/distance_xy.csv')  #read the csv data
         self.distance_pixel = distance_df['distance_pixel']     #read the distance data
         self.distance_cm = distance_df['distance_cm']           #read the distance data
         self.badFrames = 0                                      #initialize the bad frames counter
         
         coff = np.polyfit(self.distance_pixel, self.distance_cm, 2)         #get coefficients of the polynomial
         self.a, self.b, self.c = coff                                       #unpack the coefficients
-        

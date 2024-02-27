@@ -100,11 +100,15 @@ class Postures:
     self.height = 337                                                                                   #initialize the height of the frame
     self.width = 450                                                                                    #initialize the width of the frame
     if configured:                                                                                      #check if the user has configured the posture thresholds 
-      self.dataframe = pd.DataFrame(columns=['Labels', 'Values'])                                                 #initializes the dataframe
-      self.dataframe = pd.read_csv('Resources/configData.csv')                                                    #read the configuration file
-      neck = self.dataframe['Values'].loc[self.dataframe.index[self.dataframe['Labels'] == 'Neck']].tolist()		  #gets value from csv file
-      self.lowerNeckThresh = neck[0] - 2                                                                          #set the lower neck threshold
-      self.upperNeckThresh = neck[0] + 2                                                                          #set the upper neck threshold
-      torso = self.dataframe['Values'].loc[self.dataframe.index[self.dataframe['Labels'] == 'Torso']].tolist()		#gets value from csv file
-      self.lowerTorsoThresh = torso[0] - 2                                                                        #set the lower torso threshold
-      self.upperTorsoThresh = torso[0] + 2                                                                        #set the upper torso threshold
+      try:
+        self.dataframe = pd.DataFrame(columns=['Labels', 'Values'])                                                 #initializes the dataframe
+        self.dataframe = pd.read_csv('Resources/configData.csv')                                                    #read the configuration file
+        neck = self.dataframe['Values'].loc[self.dataframe.index[self.dataframe['Labels'] == 'Neck']].tolist()		  #gets value from csv file
+        self.lowerNeckThresh = neck[0] - 2                                                                          #set the lower neck threshold
+        self.upperNeckThresh = neck[0] + 2                                                                          #set the upper neck threshold
+        torso = self.dataframe['Values'].loc[self.dataframe.index[self.dataframe['Labels'] == 'Torso']].tolist()		#gets value from csv file
+        self.lowerTorsoThresh = torso[0] - 2                                                                        #set the lower torso threshold
+        self.upperTorsoThresh = torso[0] + 2                                                                        #set the upper torso threshold
+      except Exception as e:
+        print("Error in reading configuration file")
+        exit()

@@ -17,9 +17,9 @@ import imutils
 import dlib
 import cv2
 
-delayTime = 20                                                                          #set the delay time for the break reminder
+delayTime = 20                                                          #set the delay time for the break reminder
 
-#@repeat(every(2).seconds)										        #repeat the function every 2 seconds for testing purposes
+#@repeat(every(delayTime).seconds)										#repeat the function every 2 seconds for testing purposes
 @repeat(every(delayTime).minutes)										#repeat the function every 25 minutes
 def takeBreak() -> None:
     notifier.notify("Take A Break", "You have been working for 20 minutes. Take a break to rest your eyes.", "critical")   #remind the user to take a break
@@ -67,7 +67,7 @@ while True:
                 notifier.notify("No Face Detected", "Ensure your face is in the frame.", "critical")		#display tray notification
                 badFrames = 0										#reset the bad frames counter
         else:
-            numOfFaces = 0                                                 #initialize the number of faces counter
+            numOfFaces = 0                                          #initialize the number of faces counter
             for face in faces:
                 shape = predictor(gray, face)							#determine the facial landmarks for the face region, then convert the facial landmark (x, y)-coordinates to a NumPy array
                 shape = face_utils.shape_to_np(shape)                   #convert the facial landmark (x, y)-coordinates to a NumPy array
@@ -85,6 +85,7 @@ while True:
                 
                 eyeMovement.checkMovement(leftEye,rightEye)				            #check if the eyes are blinking or squinting
                 leftEyeHull, rightEyeHull = eyeMovement.getHull()                   #get the hulls for the eyes to draw on the frame
+                frame = frame.copy()									            #copy the frame to avoid modifying the original frame
                 cv2.drawContours(frame, [leftEyeHull], -1, (0, 255, 0), 1)			#draw the hull around the left eye
                 cv2.drawContours(frame, [rightEyeHull], -1, (0, 255, 0), 1)			#draw the hull around the right eye
                 
