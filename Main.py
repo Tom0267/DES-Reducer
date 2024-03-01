@@ -17,6 +17,8 @@ import imutils
 import dlib
 import cv2
 
+notifier = notif()                                              #initialize the notifier class
+notifier.notify("Application Starting", "","low")               #inform the user the application is starting
 delayTime = 20                                                          #set the delay time for the break reminder
 
 #@repeat(every(delayTime).seconds)										#repeat the function in seconds for testing purposes
@@ -33,7 +35,6 @@ predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.da
 (mStart, mEnd) = face_utils.FACIAL_LANDMARKS_IDXS["mouth"]								#grab the indexes of the facial landmarks for the mouth
 badFrames = 0																			#initialize the bad frames counter
 
-notifier = notif()                                              #initialize the notifier class
 distanceCalc = DistanceCalculator(notifier)				        #initialize the distance calculator class
 brightnessControl = BrightnessControl(notifier)					#initialize the brightness control class
 eyeRedness = Redness(notifier)									#initialize the redness class
