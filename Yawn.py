@@ -27,4 +27,3 @@ class yawning:
     def __init__(self, notifier) -> None:
         self.notifier = notifier                                #initialize the notifier class
         self.yawnCounter = 0                                    #initialize the yawn counter
-        
