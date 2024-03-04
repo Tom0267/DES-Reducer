@@ -9,16 +9,18 @@ class BrightnessControl:
         return camera
 
     def calculateBrightness(self, image) -> float:
-        average_brightness = (cv2.mean(image)[0] / 255.0)                       #calculate the average brightness of the image
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)                          #convert image to hsv
+        average_brightness = (cv2.mean(image)[2]/255)*200                       #calculate the average intensity value of the image
         return average_brightness                                               #returns the calculated brightness
 
     def setBrightness(self, brightness) -> None:
         brightness = brightness + self.brightness_offset                          #adjust brightness
+        brightness = round(brightness)
         sbc.set_brightness(brightness)                                            #set brightness
 
     def update(self, frame) -> None:
-        brightness = self.calculateBrightness(frame) * 200                                              #calculate the brightness of the frame
-        if brightness > 150:                                                                            #check if the brightness is greater than 150
+        brightness = self.calculateBrightness(frame)                                                    #calculate the brightness of the frame
+        if brightness > 100:                                                                            #check if the brightness is greater than 150
             self.badFrames += 1                                                                         #increment the bad frames counter
             if self.badFrames > 20 and self.badFrames < 22:                                             #check if the bad frames counter is greater than 20 and less than 22
                 self.notifier.notify("Screen Glare", "Adjust your screen to reduce glare.", "critical")  #display tray notification
