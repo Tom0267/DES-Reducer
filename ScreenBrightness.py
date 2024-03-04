@@ -15,7 +15,7 @@ class BrightnessControl:
 
     def setBrightness(self, brightness) -> None:
         brightness = brightness + self.brightness_offset                          #adjust brightness
-        brightness = round(brightness)
+        brightness = round(brightness)                                            #round value to nearest integer number
         sbc.set_brightness(brightness)                                            #set brightness
 
     def update(self, frame) -> None:
