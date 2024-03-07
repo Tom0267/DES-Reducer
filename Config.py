@@ -4,7 +4,6 @@ from imutils import face_utils
 from EyeArea import Eyes
 import pandas as pd
 import numpy as np
-import threading
 import cv2
 import csv
 

@@ -7,9 +7,9 @@ import cv2
 
 class GUI(customtkinter.CTk):
     def checkCamera(self):
-        if not self.cap.isOpened():															    #check if the video stream was opened correctly
+        if not self.cap.isOpened():															                #check if the video stream was opened correctly
             self.notifier.notify("Cannot open camera", "Ensure your camera is connected.", "critical")		#display tray notification
-            exit()																			            #exit the program
+            exit()																			                #exit the program
         
     def videoLoop(self):   
         self.checkCamera()                                                                      #check if the camera is connected

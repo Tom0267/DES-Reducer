@@ -28,8 +28,8 @@ def takeBreak() -> None:
     delayTime = 25                                                                                                         #set the delay time for the break reminder to 25 minutes to include the break time 
 
 detector = dlib.get_frontal_face_detector() 											#initialize dlib's face detector
-predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.dat")		#initialize qdlib's facial landmark predictor
-#predictor = dlib.shape_predictor("Resources/predictor.dat")		                    #initialize dlib's facial landmark predictor
+#predictor = dlib.shape_predictor("Resources/shape_predictor_68_face_landmarks.dat")		#initialize qdlib's facial landmark predictor
+predictor = dlib.shape_predictor("Resources/predictor.dat")		                    #initialize dlib's facial landmark predictor
 (lStart, lEnd) = face_utils.FACIAL_LANDMARKS_IDXS["left_eye"]							#grab the indexes of the facial landmarks for the left eye
 (rStart, rEnd) = face_utils.FACIAL_LANDMARKS_IDXS["right_eye"]							#grab the indexes of the facial landmarks for the right eye
 (mStart, mEnd) = face_utils.FACIAL_LANDMARKS_IDXS["mouth"]								#grab the indexes of the facial landmarks for the mouth
