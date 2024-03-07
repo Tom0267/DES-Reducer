@@ -11,7 +11,7 @@ class Postures:
   
   def checkOnScreen(self, landmark) -> bool:
     x, y = int(landmark.x * self.width), int(landmark.y * self.height)                                #gets the x and y values of the landmark in relation to the screen
-    return 0 <= x < self.width and 0 <= y < self.height                                               #returs true or false if the landmark is on the screen
+    return 0 <= x < self.width-20 and 0 <= y < self.height-20                                         #returs true or false if the landmark is on the screen
   
   def checkElbows(self) -> None:
     left_elbow = self.imagePoints.landmark[self.keyPoints.LEFT_ELBOW]                                         #get the left elbow landmark
