@@ -25,6 +25,9 @@ class Postures:
     self.leftShldr_x = int(self.imagePoints.landmark[self.keyPoints.LEFT_SHOULDER].x * self.width)      #get the x coordinates for the left shoulder
     self.leftShldr_y = int(self.imagePoints.landmark[self.keyPoints.LEFT_SHOULDER].y * self.height)     #get the y coordinates for the left shoulder
     
+    self.rightShldr_x = int(self.imagePoints.landmark[self.keyPoints.RIGHT_SHOULDER].x * self.width)      #get the x coordinates for the right shoulder
+    self.rightShldr_y = int(self.imagePoints.landmark[self.keyPoints.RIGHT_SHOULDER].y * self.height)     #get the y coordinates for the right shoulder
+    
     self.leftEar_x = int(self.imagePoints.landmark[self.keyPoints.LEFT_EAR].x * self.width)         #get the x coordinates for the left ear
     self.leftEar_y = int(self.imagePoints.landmark[self.keyPoints.LEFT_EAR].y * self.height)        #get the y coordinates for the left ear
     
@@ -47,13 +50,14 @@ class Postures:
       self.landmarkCoordinates()                                                                         #get the coordinates for the landmarks 
     
       self.neckAngle = self.findAngle(self.leftShldr_x, self.leftShldr_y, self.leftEar_x, self.leftEar_y)          #calculate the angle between the left shoulder and left ear
-      self.torsoAngle = self.findAngle(self.nose_x, self.nose_y, self.leftShldr_x, self.leftShldr_y)               #calculate the angle between the nose and left shoulder
+      self.torsoAngle = self.findAngle(self.nose_x, self.nose_y, self.rightShldr_x, self.rightShldr_y)             #calculate the angle between the nose and right shoulder
       
       if self.configured:                                                                                     #check if the program is being used for configuring or main use 
         cv2.circle(frame, (self.leftShldr_x, self.leftShldr_y), 5, (255, 0, 0), -1)                           #draw the circles for the left shoulder
         cv2.circle(frame, (self.leftEar_x, self.leftEar_y), 5, (255, 0, 0), -1)                               #draw the circles for the left ear
         cv2.circle(frame, (self.nose_x, self.nose_y), 5, (255, 0, 0), -1)                                     #draw the circles for the nose
         cv2.circle(frame, (self.leftElbow_x, self.leftElbow_y), 5, (255, 0, 0), -1)                           #draw the circles for the left elbow
+        cv2.circle(frame, (self.rightShldr_x, self.rightShldr_y), 5, (255, 0, 0), -1)                         #draw the circles for the right shoulder
         cv2.circle(frame, (self.rightElbow_x, self.rightElbow_y), 5, (255, 0, 0), -1)                         #draw the circles for the right elbow  
         
         self.checkElbows()                                                                                   #check if the user is stretching
@@ -71,7 +75,7 @@ class Postures:
           
         cv2.putText(frame, status, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, lineColor, 2)                                     #display the status of the user's posture
         cv2.line(frame, (self.leftShldr_x, self.leftShldr_y), (self.leftEar_x, self.leftEar_y), lineColor, 4)                 #draw the lines between the landmarks
-        cv2.line(frame, (self.leftShldr_x, self.leftShldr_y), (self.nose_x, self.nose_y), lineColor, 4)                       #draw the lines between the landmarks
+        cv2.line(frame, (self.rightShldr_x, self.rightShldr_y), (self.nose_x, self.nose_y), lineColor, 4)                       #draw the lines between the landmarks
       
         cv2.putText(frame, 'Neck : ' + str(int(self.neckAngle)) + '  Torso : ' + str(int(self.torsoAngle)), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)        #display neck and torse angles
         cv2.imshow('Posture', frame)           #show the frame
