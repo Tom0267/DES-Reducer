@@ -94,11 +94,11 @@ class Postures:
         self.dataframe = pd.DataFrame(columns=['Labels', 'Values'])                                                 #initializes the dataframe
         self.dataframe = pd.read_csv('Resources/configData.csv')                                                    #read the configuration file
         neck = self.dataframe['Values'].loc[self.dataframe.index[self.dataframe['Labels'] == 'Neck']].tolist()		  #gets value from csv file
-        self.lowerNeckThresh = neck[0] - 3                                                                          #set the lower neck threshold
-        self.upperNeckThresh = neck[0] + 3                                                                          #set the upper neck threshold
+        self.lowerNeckThresh = neck[0] - 2                                                                          #set the lower neck threshold
+        self.upperNeckThresh = neck[0] + 2                                                                          #set the upper neck threshold
         torso = self.dataframe['Values'].loc[self.dataframe.index[self.dataframe['Labels'] == 'Torso']].tolist()		#gets value from csv file
-        self.lowerTorsoThresh = torso[0] - 3                                                                        #set the lower torso threshold
-        self.upperTorsoThresh = torso[0] + 3                                                                        #set the upper torso threshold
+        self.lowerTorsoThresh = torso[0] - 2                                                                        #set the lower torso threshold
+        self.upperTorsoThresh = torso[0] + 2                                                                        #set the upper torso threshold
       except Exception as e:
         print("Error in reading configuration file")
         exit()

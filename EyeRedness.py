@@ -3,11 +3,11 @@ import cv2
 class Redness:
     
     def getRedness(self, roi) -> float:
-        roi = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)                        #convert the roi to the HSV (hue, saturation, and lightness) color space 
-        lowerRed = np.array([0, 20, 0], dtype=np.uint8)                   #set the lower red threshold 
-        upperRed = np.array([20, 100, 100], dtype=np.uint8)               #set the upper red threshold 
-        
-        redMask = cv2.inRange(roi, lowerRed, upperRed)                   #create a mask for the red pixels in the roi 
+        roi = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)                        #convert the roi to the HSV (hue, saturation, and lightness value) color space  
+        redMask1 = cv2.inRange(roi, (0, 70, 50), (10, 255, 255))                  #create a mask for the red pixels in the roi 
+        redMask2 = cv2.inRange(roi, (170, 70, 50), (180, 255, 255))               #create a mask for the red pixels in the roi 
+        redMask = cv2.add(redMask1, redMask2)                                     #combine the two masks to get the final mask
+        #newframe = cv2.bitwise_and(roi, roi, mask=redMask)                        #apply the mask to the roi to get the red pixels
         avgRed = np.mean(roi[redMask > 0])                               #get the average red intensity of the roi 
         
         return avgRed
@@ -23,7 +23,7 @@ class Redness:
         cv2.putText(copy, "Left Eye Redness: {:.2f}".format(leftRedness), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)              #draw the redness of the left eye on the frame
         cv2.putText(copy, "Right Eye Redness: {:.2f}".format(rightRedness), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)            #draw the redness of the right eye on the frame
         cv2.imshow("Redness Checker", copy)                                                                                                     #show the frame
-        if (leftRedness > 50 or rightRedness > 50) and (self.notificationTime - np.datetime64('now') >= self.notificationDelay):     #check if the redness of the eyes is greater than 50 and the time since the last notification is greater than 20 seconds
+        if (leftRedness > 85 or rightRedness > 85) and (np.datetime64('now') - self.notificationTime >= self.notificationDelay):     #check if the redness of the eyes is greater than 50 and the time since the last notification is greater than 20 seconds
             self.notifier.notify("Red Eyes", "if your eyes are getting red, Take a break to rest your eyes and ensure they are hydrated", "critical")         #notify the user that their eyes are red
             self.notificationTime = np.datetime64('now')
             
