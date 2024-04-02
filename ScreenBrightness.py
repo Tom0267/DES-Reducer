@@ -20,7 +20,6 @@ class BrightnessControl:
 
     def update(self, frame) -> None:
         brightness = self.calculateBrightness(frame)                                                    #calculate the brightness of the frame
-        print(brightness)
         if brightness > 120:                                                                            #check if the brightness is greater than 150
             self.badFrames += 1                                                                         #increment the bad frames counter
             if self.badFrames > 20 and self.badFrames < 22:                                             #check if the bad frames counter is greater than 20 and less than 22

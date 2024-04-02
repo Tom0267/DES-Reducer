@@ -16,7 +16,6 @@ import schedule
 import imutils
 import dlib
 import cv2
-
 notifier = notif()                                              #initialize the notifier class
 notifier.notify("Application Starting", "","low")               #inform the user the application is starting
 delayTime = 20                                                          #set the delay time for the break reminder
@@ -44,7 +43,9 @@ eyeMovement = EyeMovement(notifier)								#initialize the eye movement class
 posture = Postures(notifier, True)								#initialize the posture class
 yawns = yawning(notifier)										#initialize the yawn class
 cap = cv2.VideoCapture(0)									    #initialize the camera
+
 while True:
+    startTime = time()												#initialize the start time
     if not cap.isOpened():															                #check if the video stream was opened correctly
         notifier.notify("Cannot open camera", "Ensure your camera is connected.", "critical")		#display tray notification
         exit()																			            #exit the program
@@ -105,6 +106,8 @@ while True:
 
     if cv2.waitKey(30) & 0xFF ==ord('q'):				#hold q to quit
         break                                           #break the loop
+    endTime = time()									#initialize the end time
+    print("Time taken: ", endTime - startTime)			#print the time taken to process the frame
 
 cv2.destroyAllWindows()								#close all windows
 cap.release()										#release the camera
