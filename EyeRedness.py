@@ -3,10 +3,10 @@ import cv2
 class Redness:
     
     def getRedness(self, roi, frame) -> float:
-        roi2 = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)                                 #convert the roi to the HSV (hue, saturation, and lightness value) color space  
+        roi2 = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)                               #convert the roi to the HSV (hue, saturation, and lightness value) color space  
         redMask1 = cv2.inRange(roi2, (0, 70, 50), (10, 255, 255))                   #create a mask for the red pixels in the roi 
         redMask2 = cv2.inRange(roi2, (170, 70, 50), (180, 255, 255))                #create a mask for the red pixels in the roi 
-        redMask = cv2.add(redMask1, redMask2)                                      #combine the two masks to get the final mask
+        redMask = cv2.add(redMask1, redMask2)                                       #combine the two masks to get the final mask
         avgRed = np.mean(roi2[redMask > 0])                                         #get the average red intensity of the roi 
         return avgRed
     
