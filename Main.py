@@ -107,7 +107,7 @@ while True:
     if cv2.waitKey(30) & 0xFF ==ord('q'):				#hold q to quit
         break                                           #break the loop
     endTime = time()									#initialize the end time
-    print("Time taken: ", endTime - startTime)			#print the time taken to process the frame
+    #print("Time taken: ", endTime - startTime)			#print the time taken to process the frame
 
 cv2.destroyAllWindows()								#close all windows
 cap.release()										#release the camera

@@ -15,7 +15,7 @@ class yawning:
         mouthHull = cv2.convexHull(mouth)						#calculate the convex hull for the mouth
         if self.mouthRatio > 0.4:								#check if the mouth aspect ratio is greater than 0.7
             self.yawnCounter += 1								#increment the yawn counter
-            if self.yawnCounter >= 7 and self.yawnCounter < 9:	#if the mouth was open for a sufficient number of frames 
+            if self.yawnCounter == 7:	                        #if the mouth was open for a sufficient number of frames 
                 self.notifier.notify("Yawning Detected", "If your'e getting tired, consider taking a break", "critical")	#display tray notification
         else :
             self.yawnCounter = 0								#reset the yawn counter

@@ -104,7 +104,7 @@ class config:
                     self.calculateDistance(leftEye,rightEye,mouth)     #calculate the distance between the eyes
                     self.calculateEAR(leftEye,rightEye)               #calculate the eye aspect ratio
                     self.counter += 1
-                    if self.counter >= 10:
+                    if self.counter >= 20:
                         self.averages('Relax')
                         self.checkDataFrame('Relax')
                         self.dataframe = pd.concat([self.dataframe, pd.DataFrame({'Labels': ['EE'], 'Values': [self.EEDistance]})])  #write the average distance between the eyes to the dataframe
@@ -137,7 +137,7 @@ class config:
                     rightEye = shape[rStart:rEnd]
                     self.calculateEAR(leftEye,rightEye)               #calculate the eye aspect ratio
                     self.counter += 1
-                    if self.counter >= 10:
+                    if self.counter >= 20:
                         self.averages('Blinks')
                         self.checkDataFrame('Blinks')
                         self.dataframe = pd.concat([self.dataframe, pd.DataFrame({'Labels': ['CEAR'], 'Values': [self.CEAR]})]) #write the average eye aspect ratio to the csv file
@@ -152,7 +152,7 @@ class config:
         self.counter = 0                                                    #initialize the counter
         self.loop = True                                                    #initialize the loop flag
         while self.loop == True:                                            #loop until the configuration is complete
-            while self.counter < 10:                                                 #loop until the counter reaches 10
+            while self.counter < 20:                                                 #loop until the counter reaches 10
                 self.checkCamera(self.cap)                                           #check if the camera is connected
                 ret, frame = self.cap.read()                                         #read the frame from the camera
                 self.postures.checkPosture(frame)                          #check the user's posture

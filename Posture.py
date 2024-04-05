@@ -18,7 +18,7 @@ class Postures:
     right_elbow = self.imagePoints.landmark[self.keyPoints.RIGHT_ELBOW]                                       #get the right elbow landmark
     if left_elbow and self.checkOnScreen(left_elbow) and right_elbow and self.checkOnScreen(right_elbow):     #check if the elbows are on the screen
       self.elbowCounter += 1                                                                                  #increment the elbow counter
-      if self.elbowCounter >= 3 and self.elbowCounter < 5:                                                    #checks if the elbow has been on screen for 3 frames
+      if self.elbowCounter == 4:                                                                              #checks if the elbow has been on screen for 3 frames
         self.notifier.notify("Stretching Detected", "If you're tired or uncomfortable, consider taking break.", "normal")		#display tray notification
   
   def landmarkCoordinates(self) -> None:
@@ -70,7 +70,7 @@ class Postures:
           status = 'Bad Posture'                                                               #set the status to bad posture 
           lineColor = (0, 0, 255)                                                              #set the line color to red if the user has bad posture
           self.badFrames += 1                                                                  #increment the bad posture frames counter
-          if self.badFrames >= 15 and self.badFrames < 17:
+          if self.badFrames == 15:
             self.notifier.notify("Bad Posture Detected", "Ensure you are sitting up straight.", "normal")		                  #display tray notification    
           
         cv2.putText(frame, status, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, lineColor, 2)                                     #display the status of the user's posture
@@ -100,5 +100,5 @@ class Postures:
         self.lowerTorsoThresh = torso[0] - 2                                                                        #set the lower torso threshold
         self.upperTorsoThresh = torso[0] + 2                                                                        #set the upper torso threshold
       except Exception as e:
-        print("Error in reading configuration file")
+        self.notifier.notify("Error", "Error in reading configuration file", "critical")		#display tray notification
         exit()

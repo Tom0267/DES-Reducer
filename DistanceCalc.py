@@ -10,11 +10,11 @@ class DistanceCalculator:
         distance_cm = self.a*eyeDistance**2+self.b*eyeDistance+self.c-15                      #calculate the distance in cm
         if distance_cm < 51:                                                                                                        #for safe use, distance to screen should be grater than 51 cm
             self.badFrames += 1                                                                                                     #increment the bad frames counter
-            if self.badFrames > 20 and self.badFrames <22:                                                                          #check if the bad frames counter is greater than 20
+            if self.badFrames == 20:                                                                                                #check if the bad frames counter is greater than 20
                 self.notifier.notify("Too Close To Screen", f'{int(distance_cm)} cm - Not Safe', "normal")		                    #display tray notification
         elif distance_cm > 63:                                                                                                      #check if the distance is greater than 63 cm
             self.badFrames += 1                                                                                                     #increment the bad frames counter
-            if self.badFrames > 20 and self.badFrames <22:
+            if self.badFrames == 20:
                 self.notifier.notify("Too Far From Screen", f'{int(distance_cm)} cm - Not Safe', "normal")		                    #display tray notification            
         else:
             self.badFrames = 0                                                                                                      #reset the bad frames counter
