@@ -25,6 +25,5 @@ class DistanceCalculator:
         self.distance_pixel = distance_df['distance_pixel']     #read the distance data
         self.distance_cm = distance_df['distance_cm']           #read the distance data
         self.badFrames = 0                                      #initialize the bad frames counter
-        
         coff = np.polyfit(self.distance_pixel, self.distance_cm, 2)         #get coefficients of the polynomial
         self.a, self.b, self.c = coff                                       #unpack the coefficients
