@@ -36,7 +36,9 @@ DES-Reducer is a Python application designed to monitor and reduce Digital Eye S
 
 ## Usage
 
-After running the application, the GUI will launch and access your webcam to monitor the relevant parameters. Please make sure your webcam is functional and properly positioned. The application will provide real-time feedback and notifications to help you adjust your environment and habits to reduce digital eye strain.
+After running the application, the GUI will launch and access your webcam. Please make sure your webcam is functional and properly positioned. The application will provide real-time feedback and notifications to help you adjust your environment and habits to reduce digital eye strain.
+
+![image](https://github.com/user-attachments/assets/b7987f3d-11d4-4155-ae83-a80a68f3f65b)
 
 ## Modules Overview
 
