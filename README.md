@@ -42,6 +42,7 @@ After running the application, the GUI will launch and access your webcam. Pleas
 
 ## Modules Overview
 
+- **Main.py**: The main entry point of the application.
 - **Config.py**: Contains configuration settings for the application.  
 - **DistanceCalc.py**: Calculates the distance between the user and the screen.  
 - **EyeArea.py**: Analyses the area of the eyes to monitor blinking and potential redness.  
@@ -49,12 +50,11 @@ After running the application, the GUI will launch and access your webcam. Pleas
 - **EyeRedness.py**: Detects redness in the eyes as an indicator of strain.  
 - **FaceDetector.py**: Handles face detection functionalities.  
 - **FaceTrack.py**: Tracks facial movements to assess posture and alignment.  
-- **GUI.py**: Manages the graphical user interface components.  
-- **Main.py**: The main entry point of the application.  
+- **GUI.py**: Manages the graphical user interface components.    
 - **Posture.py**: Monitors user posture to provide feedback on seating positions.  
 - **ScreenBrightness.py**: Assesses and provides recommendations on screen brightness.  
 - **Yawn.py**: Detects yawning to suggest breaks when fatigue is detected.  
-- **graph.py**: Generates graphical representations of the monitored parameters.  
+- **graph.py**: Generates graphical representations of survey results.  
 - **notifier.py**: Manages notifications and alerts to the user.  
 
 ## Contributing
