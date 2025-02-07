@@ -63,7 +63,7 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 
 ## Licence
 
-This project is licensed under the MIT Licence. See the `LICENSE` file for more details.
+This project is licensed under the GNU General Public License v3.0 (GPL v3). This means that any modifications or derivative works must also be open-source and distributed under the same licence. See the LICENSE file for more details.
 
 ## Acknowledgements
 
