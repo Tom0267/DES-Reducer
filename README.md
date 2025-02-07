@@ -5,7 +5,6 @@ DES-Reducer is a Python application designed to monitor and reduce Digital Eye S
 ## Features
 
 - **Face Detection**: Identifies the user's face to monitor eye-related metrics.  
-- **Eye Movement Tracking**: Analyses eye movements to detect patterns that may contribute to eye strain.  
 - **Blink Detection**: Monitors blinking frequency to ensure eyes are adequately lubricated.  
 - **Screen Brightness Adjustment**: Assesses ambient light and screen brightness, providing recommendations for optimal settings.  
 - **Posture Monitoring**: Evaluates user posture to prevent strain related to improper seating positions.  
