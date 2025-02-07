@@ -61,10 +61,6 @@ After running the application, the GUI will launch and access your webcam. Pleas
 
 Contributions are welcome! Please fork the repository and submit a pull request with your proposed changes. Ensure that your code adheres to the project's coding standards and includes appropriate documentation.
 
-## Licence
-
-This project is licensed under the GNU General Public License v3.0 (GPL v3). This means that any modifications or derivative works must also be open-source and distributed under the same licence. See the LICENSE file for more details.
-
 ## Acknowledgements
 
 Special thanks to the open-source community for providing the tools and libraries that made this project possible.
